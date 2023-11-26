@@ -4,17 +4,23 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-bot_token = os.getenv("BOT_TOKEN")
-bot_prefix = os.getenv("BOT_PREFIX")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+BOT_PREFIX = os.getenv("BOT_PREFIX")
+RCON_HOST = os.getenv("RCON_HOST")
+RCON_PORT = int(os.getenv("RCON_PORT"))
+RCON_PASS = os.getenv("RCON_PASS")
 
 intents = nextcord.Intents.all()
-bot = commands.Bot(command_prefix=bot_prefix, intents=intents)
+bot = commands.Bot(command_prefix=BOT_PREFIX, intents=intents)
 
 @bot.event
 async def on_ready():
     print(f'We have logged in as {bot.user}, created by koz')
     activity = nextcord.Game(name="Playing The Isle: Evrima")
     await bot.change_presence(activity=activity)
+
+for folder in os.listdir("cogs"):
+    bot.load_extension(f"cogs.{folder}")
 
 # Just an example command for now.
 @bot.command()
@@ -33,4 +39,4 @@ async def guilds_error(ctx, error):
     if isinstance(error, commands.NotOwner):
         await ctx.send("This command is restricted to the bot owner.")
 
-bot.run(bot_token)
+bot.run(BOT_TOKEN)
