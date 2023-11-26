@@ -9,9 +9,10 @@ BOT_PREFIX = os.getenv("BOT_PREFIX")
 RCON_HOST = os.getenv("RCON_HOST")
 RCON_PORT = int(os.getenv("RCON_PORT"))
 RCON_PASS = os.getenv("RCON_PASS")
+ADMIN_ROLE_ID = int(os.getenv("ADMIN_ROLE_ID"))
 
 intents = nextcord.Intents.all()
-bot = commands.Bot(command_prefix=BOT_PREFIX, intents=intents)
+bot = commands.Bot(command_prefix=BOT_PREFIX, intents=intents, help_command=None)
 
 @bot.event
 async def on_ready():
@@ -39,4 +40,5 @@ async def guilds_error(ctx, error):
     if isinstance(error, commands.NotOwner):
         await ctx.send("This command is restricted to the bot owner.")
 
-bot.run(BOT_TOKEN)
+if __name__ == "__main__":
+    bot.run(BOT_TOKEN)
