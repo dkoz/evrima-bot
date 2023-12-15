@@ -1,22 +1,14 @@
 import nextcord
 from nextcord.ext import commands
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-BOT_PREFIX = os.getenv("BOT_PREFIX")
-RCON_HOST = os.getenv("RCON_HOST")
-RCON_PORT = int(os.getenv("RCON_PORT"))
-RCON_PASS = os.getenv("RCON_PASS")
-ADMIN_ROLE_ID = int(os.getenv("ADMIN_ROLE_ID"))
+import config
 
 intents = nextcord.Intents.all()
-bot = commands.Bot(command_prefix=BOT_PREFIX, intents=intents, help_command=None)
+bot = commands.Bot(command_prefix=config.BOT_PREFIX, intents=intents, help_command=None)
 
 @bot.event
 async def on_ready():
-    print(f'We have logged in as {bot.user}, created by koz')
+    print(f'We have logged in as {bot.user}, created by KoZ')
     activity = nextcord.Game(name="Playing The Isle: Evrima")
     await bot.change_presence(activity=activity)
 
@@ -24,16 +16,18 @@ for folder in os.listdir("cogs"):
     bot.load_extension(f"cogs.{folder}")
 
 # Just an example command for now.
-@bot.command()
+@bot.command(description="Shows list of guilds the bot is in.", hidden=True)
 @commands.is_owner()
 async def guilds(ctx):
     guilds = bot.guilds
 
-    response = "Guilds:\n"
+    embed = nextcord.Embed(title="Guilds", description="List of Guilds", color=nextcord.Color.blue())
     for guild in guilds:
-        response += f"- {guild.name} (ID: {guild.id})\n"
+        embed.add_field(name=guild.name, value=f"ID: {guild.id}", inline=False)
+    
+    embed.set_footer(text="Created by KoZ")
 
-    await ctx.send(response)
+    await ctx.send(embed=embed)
 
 @guilds.error
 async def guilds_error(ctx, error):
@@ -41,4 +35,4 @@ async def guilds_error(ctx, error):
         await ctx.send("This command is restricted to the bot owner.")
 
 if __name__ == "__main__":
-    bot.run(BOT_TOKEN)
+    bot.run(config.BOT_TOKEN)

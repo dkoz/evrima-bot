@@ -3,10 +3,10 @@
 
  This is a discord RCON bot for The Isle: Evrima. (This is not an injection bot!)
 
-# Requirements
+## Requirements
 >Requires Python 3.10+
 
-# Installation (Linux)
+## Installation (Linux)
 1. Create a new user and switch to it.
 ```
 sudo adduser evrimarcon

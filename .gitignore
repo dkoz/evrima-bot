@@ -1,3 +1,5 @@
 
+disabled_cogs/*
 *.pyc
 .env
+*.json
