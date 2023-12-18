@@ -3,6 +3,18 @@
 
  This is a discord RCON bot for The Isle: Evrima. (This is not an injection bot!)
 
+## Optional Environmental Variables
+Variable | Description
+--- | ---
+ENABLE_LOGPLAYERS | Enables the logging of players on your server.
+FTP_HOST | Host information for the FTP connection.
+FTP_PORT | Port number for the FTP connection.
+FTP_USER | Username for FTP access.
+FTP_PASS | Password for your FTP account.
+HOSTNAME | The name of the server.
+MAXPLAYERS | Maximum number of players allowed on the server.
+CURRENTMAP | The current map for your server
+
 ## Requirements
 >Requires Python 3.10+
 
