@@ -1,7 +1,7 @@
 import nextcord
 from nextcord.ext import commands, tasks
 from config import RCON_HOST, RCON_PORT, RCON_PASS
-from config import HOSTNAME, MAXPLAYERS, CURRENTMAP
+from config import SERVERNAME, MAXPLAYERS, CURRENTMAP
 from lib.util import evrima_rcon
 from lib.util import saveserverinfo, loadserverinfo
 
@@ -14,12 +14,12 @@ class EvrimaMonitorCog(commands.Cog):
         self.update_player_count.start()
 
     def create_embed(self, player_count):
-        hostname = HOSTNAME
+        servername = SERVERNAME
         currentmap = CURRENTMAP
         maxplayers = MAXPLAYERS
 
         embed = nextcord.Embed(title="Server Status", color=nextcord.Color.blue())
-        embed.add_field(name=f"{hostname}", value="", inline=False)
+        embed.add_field(name=f"{servername}", value="", inline=False)
         embed.add_field(name="Map", value=f"{currentmap}", inline=True)
         embed.add_field(name="Players", value=f"{player_count}/{maxplayers}", inline=True)
         embed.add_field(name="Gamemode", value="Survival Mode", inline=True)
