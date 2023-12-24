@@ -1,3 +1,5 @@
 nextcord
 python-dotenv
 paramiko
+py-dactyl
+aiohttp

@@ -3,3 +3,6 @@ disabled_cogs/*
 *.pyc
 .env
 *.json
+lib/eos.py
+lib/tracker.py
+cogs/tracker/*

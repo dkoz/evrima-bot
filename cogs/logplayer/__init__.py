@@ -1,9 +1,10 @@
 import nextcord
-from nextcord.ext import commands
+from nextcord.ext import commands, tasks
 import paramiko
 import os
 import json
 import re
+import asyncio
 from config import ENABLE_LOGPLAYERS, FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER
 
 # This is highly experimental and is not completed yet.
@@ -17,16 +18,40 @@ class LogPlayers(commands.Cog):
         self.ftp_password = FTP_PASS
         self.filepath = "/TheIsle/Saved/Logs/TheIsle.log"
         self.json_file = "players.json"
+        self.update_task = self.update_players_background.start()
 
-    def connect_sftp(self):
-        try:
-            transport = paramiko.Transport((self.ftp_host, self.ftp_port))
+    def cog_unload(self):
+        self.update_task.cancel()
+
+    @tasks.loop(minutes=5)
+    async def update_players_background(self):
+        file_content = await self.async_sftp_operation(self.read_file, self.filepath)
+        if file_content is not None:
+            player_data = self.parse_log_file(file_content)
+            self.update_json(player_data)
+            print("Player data updated automatically.")
+        else:
+            print("Failed to connect to SFTP server.")
+
+    @update_players_background.before_loop
+    async def before_update_players(self):
+        await self.bot.wait_until_ready()
+
+    async def async_sftp_operation(self, operation, *args, **kwargs):
+        loop = asyncio.get_event_loop()
+        with paramiko.Transport((self.ftp_host, self.ftp_port)) as transport:
             transport.connect(username=self.ftp_username, password=self.ftp_password)
             sftp = paramiko.SFTPClient.from_transport(transport)
-            return sftp
-        except Exception as e:
-            print(f"Error connecting to SFTP: {e}")
-            return None
+            try:
+                result = await loop.run_in_executor(None, operation, sftp, *args, **kwargs)
+                return result
+            finally:
+                sftp.close()
+
+    def read_file(self, sftp, filepath):
+        with sftp.file(filepath, "r") as file:
+            file_content = file.read().decode()
+        return file_content
 
     def parse_log_file(self, file_content):
         pattern = r"LogNet: Login request: .*?Name=([^\s]+) userId: RedpointEOS:(\w+) platform: RedpointEOS.*?LogTemp: Warning: Player Connecting \.\. Steam_Id: (\d+)"
@@ -68,16 +93,11 @@ class LogPlayers(commands.Cog):
             with open(json_file, "w", encoding="utf-8") as file:
                 json.dump(player_data, file, indent=4)
 
-
     @commands.command()
     @commands.is_owner()
     async def updateplayers(self, ctx):
-        sftp = self.connect_sftp()
-        if sftp:
-            with sftp.file(self.filepath, "r") as file:
-                file_content = file.read().decode()
-            sftp.close()
-            
+        file_content = await self.async_sftp_operation(self.read_file, self.filepath)
+        if file_content is not None:
             player_data = self.parse_log_file(file_content)
             self.update_json(player_data)
             await ctx.send("Player data updated.")
@@ -99,9 +119,15 @@ class LogPlayers(commands.Cog):
 
                 message = "Player List:\n"
                 for player in players:
-                    message += f"Name: {player['Name']}, EOS_Id: {player['EOS_Id']}, Steam_Id: {player['Steam_Id']}\n"
+                    new_line = f"Name: {player['Name']}, EOS_Id: {player['EOS_Id']}, Steam_Id: {player['Steam_Id']}\n"
+                    if len(message) + len(new_line) > 2000:
+                        await ctx.send(message)
+                        message = "Player List Continued:\n"
 
-                await ctx.send(message)
+                    message += new_line
+
+                if message:
+                    await ctx.send(message)
 
         except FileNotFoundError:
             await ctx.send("Players database not found.")

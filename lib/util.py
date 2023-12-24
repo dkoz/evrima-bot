@@ -1,26 +1,36 @@
-import socket
 import os
 import json
+import asyncio
 
 async def evrima_rcon(host, port, password, command_bytes):
     timeout = 30
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        try:
-            s.settimeout(timeout)
-            s.connect((host, port))
-            # Send login packets
-            payload = bytes('\x01', 'utf-8') + password.encode() + bytes('\x00', 'utf-8')
-            s.send(payload)
-            # Check for login
-            response = s.recv(1024)
-            if "Accepted" not in str(response):
-                return "Login failed"
-            # Send the commands
-            s.send(command_bytes)
-            response = s.recv(1024)
-            return response.decode()
-        except socket.error as e:
-            return f"Socket error: {e}"
+    try:
+        reader, writer = await asyncio.wait_for(asyncio.open_connection(host, port), timeout=timeout)
+
+        payload = bytes('\x01', 'utf-8') + password.encode() + bytes('\x00', 'utf-8')
+        writer.write(payload)
+        await writer.drain()
+
+        response = await asyncio.wait_for(reader.read(1024), timeout=timeout)
+        if "Accepted" not in str(response):
+            writer.close()
+            await writer.wait_closed()
+            return "Login failed"
+
+        writer.write(command_bytes)
+        await writer.drain()
+
+        response = await asyncio.wait_for(reader.read(1024), timeout=timeout)
+        writer.close()
+        await writer.wait_closed()
+        return response.decode()
+
+    except asyncio.TimeoutError:
+        return "Connection timed out"
+    except asyncio.CancelledError:
+        return "Connection cancelled"
+    except Exception as e:
+        return f"Socket error: {e}"
         
 def saveserverinfo(guild_id, channel_id, message_id):
     directory = 'data'

@@ -9,8 +9,8 @@ bot = commands.Bot(command_prefix=config.BOT_PREFIX, intents=intents, help_comma
 @bot.event
 async def on_ready():
     print(f'We have logged in as {bot.user}, created by KoZ')
-    activity = nextcord.Game(name="Playing The Isle: Evrima")
-    await bot.change_presence(activity=activity)
+    #activity = nextcord.Game(name="Playing The Isle: Evrima")
+    #await bot.change_presence(activity=activity)
 
 for folder in os.listdir("cogs"):
     bot.load_extension(f"cogs.{folder}")

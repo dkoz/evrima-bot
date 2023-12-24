@@ -12,6 +12,7 @@ class EvrimaMonitorCog(commands.Cog):
         self.rcon_port = RCON_PORT
         self.rcon_password = RCON_PASS
         self.update_player_count.start()
+        self.update_bot_activity.start()
 
     def create_embed(self, player_count):
         servername = SERVERNAME
@@ -25,6 +26,17 @@ class EvrimaMonitorCog(commands.Cog):
         embed.add_field(name="Gamemode", value="Survival Mode", inline=True)
 
         return embed
+    
+    @tasks.loop(seconds=30)
+    async def update_bot_activity(self):
+        player_count = await self.get_player_count()
+        activity_text = f"Players {player_count}/{MAXPLAYERS}"
+        activity = nextcord.Activity(type=nextcord.ActivityType.watching, name=activity_text)
+        await self.bot.change_presence(activity=activity)
+
+    @update_bot_activity.before_loop
+    async def before_update_bot_activity(self):
+        await self.bot.wait_until_ready()
 
     @tasks.loop(minutes=5)
     async def update_player_count(self):
@@ -50,7 +62,7 @@ class EvrimaMonitorCog(commands.Cog):
 
     def parse_player_list(self, response):
         lines = response.split('\n')
-        lines = [line for line in lines if line.strip()]
+        lines = [line.strip() for line in lines if line.strip()]
         player_count = len(lines) // 2
         return player_count
 
@@ -71,6 +83,7 @@ class EvrimaMonitorCog(commands.Cog):
 
     def cog_unload(self):
         self.update_player_count.cancel()
+        self.update_bot_activity.cancel()
 
 def setup(bot):
     bot.add_cog(EvrimaMonitorCog(bot))

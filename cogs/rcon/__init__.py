@@ -60,8 +60,10 @@ class EvrimaRcon(commands.Cog):
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.MissingRole):
             await ctx.send(f"You must have the required role to use this command.")
+        elif isinstance(error, commands.CommandInvokeError):
+            await ctx.send(f"Error executing command: {error.original}")
         else:
-            pass
+            await ctx.send(f"An unknown error occurred: {error}")
 
 def setup(bot):
     bot.add_cog(EvrimaRcon(bot))
