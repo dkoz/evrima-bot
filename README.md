@@ -8,6 +8,7 @@ Variable | Description
 --- | ---
 CHATLOG_CHANNEL | Channel where you want chat logs to be posted.
 KILLFEED_CHANNEL | Channel where you want kill feed to be posted.
+ADMINLOG_CHANNEL | Channel where in-game admin commands are logged.
 ENABLE_LOGPLAYERS | Enables the logging of players on your server.
 FTP_HOST | Host information for the FTP connection.
 FTP_PORT | Port number for the FTP connection.
@@ -19,6 +20,9 @@ CURRENTMAP | The current map for your server
 PTERO_URL | Url to your pterodactyl panel.
 PTERO_API | API key generated under your pterodactyl panel account.
 PTERO_WHITELIST | Specified discord user ids that can control game servers.
+ENABLE_RESTART | Enables the restart cog.
+RESTART_SERVERID | UUID for your pterodactyl server.
+RESTART_CHANNEL | Channel that restarts will be reported to.
 
 ## Requirements
 >Requires [Python 3.10+](https://www.python.org/downloads/)

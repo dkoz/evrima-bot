@@ -11,6 +11,7 @@ RCON_PASS = os.getenv("RCON_PASS")
 ADMIN_ROLE_ID = int(os.getenv("ADMIN_ROLE_ID", 0))
 CHATLOG_CHANNEL = int(os.getenv("CHATLOG_CHANNEL", 0))
 KILLFEED_CHANNEL = int(os.getenv("KILLFEED_CHANNEL", 0))
+ADMINLOG_CHANNEL = int(os.getenv("ADMINLOG_CHANNEL", 0))
 
 ENABLE_LOGPLAYERS = os.getenv('ENABLE_LOGPLAYERS', 'false').lower() in ['true', '1', 'yes']
 FTP_HOST = os.getenv("FTP_HOST")
@@ -24,3 +25,8 @@ CURRENTMAP = os.getenv("CURRENTMAP", "Gateway")
 PTERO_API = os.getenv("PTERO_API")
 PTERO_URL = os.getenv("PTERO_URL")
 PTERO_WHITELIST = [int(id.strip()) for id in os.getenv("PTERO_WHITELIST", "").split(",")]
+
+# Disabled by default
+ENABLE_RESTART = os.getenv('ENABLE_RESTART', 'false').lower() in ['true', '1', 'yes']
+RESTART_SERVERID = int(os.getenv("RESTART_SERVERID", 0))
+RESTART_CHANNEL = int(os.getenv("RESTART_CHANNEL", 0))
