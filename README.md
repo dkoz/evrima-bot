@@ -9,7 +9,7 @@ Variable | Description
 CHATLOG_CHANNEL | Channel where you want chat logs to be posted.
 KILLFEED_CHANNEL | Channel where you want kill feed to be posted.
 ADMINLOG_CHANNEL | Channel where in-game admin commands are logged.
-ENABLE_LOGPLAYERS | Enables the logging of players on your server.
+ENABLE_LOGGING | Enables the logging on your server. (You must configure FTP Information when enabling this feature!)
 FTP_HOST | Host information for the FTP connection.
 FTP_PORT | Port number for the FTP connection.
 FTP_USER | Username for FTP access.
@@ -17,6 +17,7 @@ FTP_PASS | Password for your FTP account.
 SERVERNAME | The name of the server.
 MAXPLAYERS | Maximum number of players allowed on the server.
 CURRENTMAP | The current map for your server
+PTERO_ENABLE | Enable Pterodactyl Panel support
 PTERO_URL | Url to your pterodactyl panel.
 PTERO_API | API key generated under your pterodactyl panel account.
 PTERO_WHITELIST | Specified discord user ids that can control game servers.

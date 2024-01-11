@@ -5,7 +5,7 @@ import os
 import json
 import re
 import asyncio
-from config import ENABLE_LOGPLAYERS, FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER
+from config import ENABLE_LOGGING, FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER
 
 # This is highly experimental and is not completed yet.
 # This has to be enable inside your ENV file.
@@ -133,7 +133,7 @@ class LogPlayers(commands.Cog):
             await ctx.send("Players database not found.")
 
 def setup(bot):
-    if ENABLE_LOGPLAYERS:
+    if ENABLE_LOGGING:
         bot.add_cog(LogPlayers(bot))
     else:
         print("LogPlayers cog is disabled.")

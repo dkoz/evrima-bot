@@ -14,7 +14,7 @@ CHATLOG_CHANNEL = int(os.getenv("CHATLOG_CHANNEL", 0))
 KILLFEED_CHANNEL = int(os.getenv("KILLFEED_CHANNEL", 0))
 ADMINLOG_CHANNEL = int(os.getenv("ADMINLOG_CHANNEL", 0))
 
-ENABLE_LOGPLAYERS = os.getenv('ENABLE_LOGPLAYERS', 'false').lower() in ['true', '1', 'yes']
+ENABLE_LOGGING = os.getenv('ENABLE_LOGGING', 'false').lower() in ['true', '1', 'yes']
 FTP_HOST = os.getenv("FTP_HOST", "localhost")
 FTP_PORT = int(os.getenv("FTP_PORT", 21))
 FTP_USER = os.getenv("FTP_USER", "user")
