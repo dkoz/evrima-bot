@@ -4,7 +4,8 @@ import paramiko
 import os
 import re
 import asyncio
-from config import FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER, CHATLOG_CHANNEL
+from config import FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER
+from config import ENABLE_LOGGING, CHATLOG_CHANNEL
 
 class LogChat(commands.Cog):
     def __init__(self, bot):
@@ -85,4 +86,7 @@ class LogChat(commands.Cog):
             print("Channel not found or bot does not have permission to access it.")
 
 def setup(bot):
-    bot.add_cog(LogChat(bot))
+    if ENABLE_LOGGING:
+        bot.add_cog(LogChat(bot))
+    else:
+        print("LogChat cog is disabled.")

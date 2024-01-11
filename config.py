@@ -19,6 +19,7 @@ FTP_HOST = os.getenv("FTP_HOST", "localhost")
 FTP_PORT = int(os.getenv("FTP_PORT", 21))
 FTP_USER = os.getenv("FTP_USER", "user")
 FTP_PASS = os.getenv("FTP_PASS", "password")
+ENABLE_INJECTIONS = os.getenv('ENABLE_INJECTIONS', 'false').lower() in ['true', '1', 'yes']
 SERVERNAME = os.getenv("SERVERNAME", "The Isle")
 MAXPLAYERS = int(os.getenv("MAXPLAYERS", 100))
 CURRENTMAP = os.getenv("CURRENTMAP", "Gateway")

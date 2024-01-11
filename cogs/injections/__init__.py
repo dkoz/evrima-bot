@@ -5,6 +5,7 @@ import asyncio
 import io
 from collections import defaultdict
 from config import FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER
+from config import ENABLE_INJECTIONS
 
 class MultiKeyConfigParser:
     def __init__(self):
@@ -104,4 +105,7 @@ class GameIniAdminManager(commands.Cog):
             transport.close()
 
 def setup(bot):
-    bot.add_cog(GameIniAdminManager(bot))
+    if ENABLE_INJECTIONS:
+        bot.add_cog(GameIniAdminManager(bot))
+    else:
+        print("Admin Injections cog disabled.")

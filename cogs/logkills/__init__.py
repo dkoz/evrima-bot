@@ -5,6 +5,7 @@ import os
 import re
 import asyncio
 from config import FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER, KILLFEED_CHANNEL
+from config import ENABLE_LOGGING
 
 class KillFeed(commands.Cog):
     def __init__(self, bot):
@@ -86,4 +87,7 @@ class KillFeed(commands.Cog):
             print("Channel not found or bot does not have permission to access it.")
 
 def setup(bot):
-    bot.add_cog(KillFeed(bot))
+    if ENABLE_LOGGING:
+        bot.add_cog(KillFeed(bot))
+    else:
+        print("KillFeed cog is disabled.")
