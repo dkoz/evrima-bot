@@ -2,7 +2,7 @@ import nextcord
 from nextcord.ext import commands
 from pydactyl import PterodactylClient
 import logging
-from config import PTERO_API, PTERO_URL, PTERO_WHITELIST
+from config import PTERO_API, PTERO_URL, PTERO_WHITELIST, PTERO_ENABLE
 
 logging.basicConfig(level=logging.INFO)
 
@@ -81,4 +81,7 @@ class PterodactylControls(commands.Cog):
             await ctx.send(f'Error: {e}')
 
 def setup(bot):
-    bot.add_cog(PterodactylControls(bot))
+    if PTERO_ENABLE:
+        bot.add_cog(PterodactylControls(bot))
+    else:
+        print("Pterodactyl cog is disabled.")
