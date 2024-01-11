@@ -26,32 +26,5 @@ ENABLE_RESTART | Enables the restart cog.
 RESTART_SERVERID | UUID for your pterodactyl server.
 RESTART_CHANNEL | Channel that restarts will be reported to.
 
-## Requirements
->Requires [Python 3.10+](https://www.python.org/downloads/)
-
-## Installation (Linux)
-1. Create a new user and switch to it.
-```
-sudo adduser evrimarcon
-su - evrimarcon
-```
-2. Clone the Arkon bot repository with the following commands
-```
-git clone https://github.com/dkoz/evrima-bot
-cd evrima-bot
-```
-3. Now you need to create a virtual env and install the requirements.
-```
-virtualenv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-4. Configure the environment variables.
-```
-cp .env.example .env
-nano .env
-```
-5. Now run the bot.
-```
-python main.py
-```
+## Installation
+For detailed installation instructions, please refer to our [git wiki](https://github.com/dkoz/evrima-bot/wiki). Specific instructions for [Linux](https://github.com/dkoz/evrima-bot/wiki/Linux-Installation) and [Windows](https://github.com/dkoz/evrima-bot/wiki/Windows-Installation) can be found at their respective links.
