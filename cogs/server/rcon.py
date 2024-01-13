@@ -1,6 +1,6 @@
 import nextcord
 from nextcord.ext import commands
-from lib.util import evrima_rcon
+from util.functions import evrima_rcon
 from config import RCON_HOST, RCON_PORT, RCON_PASS, ADMIN_ROLE_ID
 
 ADMIN_ROLE = ADMIN_ROLE_ID

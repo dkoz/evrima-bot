@@ -2,8 +2,8 @@ import nextcord
 from nextcord.ext import commands, tasks
 from config import RCON_HOST, RCON_PORT, RCON_PASS
 from config import SERVERNAME, MAXPLAYERS, CURRENTMAP
-from lib.util import evrima_rcon
-from lib.util import saveserverinfo, loadserverinfo
+from util.functions import evrima_rcon
+from util.functions import saveserverinfo, loadserverinfo
 
 class EvrimaMonitorCog(commands.Cog):
     def __init__(self, bot):

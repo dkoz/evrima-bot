@@ -2,6 +2,6 @@
 *.pyc
 .env
 *.json
-lib/eos.py
-lib/tracker.py
+util/eos.py
+util/tracker.py
 cogs_disabled/*

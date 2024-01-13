@@ -1,7 +1,7 @@
 import asyncio
 import nextcord
 from nextcord.ext import commands, tasks
-from lib.util import evrima_rcon
+from util.functions import evrima_rcon
 from pydactyl import PterodactylClient
 from datetime import datetime
 import pytz
