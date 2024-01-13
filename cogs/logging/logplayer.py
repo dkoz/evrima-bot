@@ -93,7 +93,7 @@ class LogPlayers(commands.Cog):
             with open(json_file, "w", encoding="utf-8") as file:
                 json.dump(player_data, file, indent=4)
 
-    @commands.command()
+    @commands.command(description="Update the players database.")
     @commands.is_owner()
     async def updateplayers(self, ctx):
         file_content = await self.async_sftp_operation(self.read_file, self.filepath)
@@ -119,7 +119,7 @@ class LogPlayers(commands.Cog):
 
                 message = "Player List:\n"
                 for player in players:
-                    new_line = f"Name: {player['Name']}, EOS_Id: {player['EOS_Id']}, Steam_Id: {player['Steam_Id']}\n"
+                    new_line = f"Name: {player['Name']}, EOSID: {player['EOS_Id']}, SteamID64: {player['Steam_Id']}\n"
                     if len(message) + len(new_line) > 2000:
                         await ctx.send(message)
                         message = "Player List Continued:\n"
@@ -128,6 +128,40 @@ class LogPlayers(commands.Cog):
 
                 if message:
                     await ctx.send(message)
+
+        except FileNotFoundError:
+            await ctx.send("Players database not found.")
+
+    @commands.command()
+    @commands.is_owner()
+    async def findplayer(self, ctx, search_term: str):
+        data_folder = "data"
+        json_file = os.path.join(data_folder, "players.json")
+
+        try:
+            with open(json_file, "r", encoding="utf-8") as file:
+                players = json.load(file)
+                found_players = []
+
+                for player in players:
+                    if search_term.lower() in player['Name'].lower() or \
+                    search_term in player['EOS_Id'] or \
+                    search_term in player['Steam_Id']:
+                        found_players.append(player)
+
+                if found_players:
+                    message = "Found Players:\n"
+                    for player in found_players:
+                        new_line = f"Name: {player['Name']}, EOSID: {player['EOS_Id']}, SteamID64: {player['Steam_Id']}\n"
+                        if len(message) + len(new_line) > 2000:
+                            await ctx.send(message)
+                            message = "Player List Continued:\n"
+
+                        message += new_line
+
+                    await ctx.send(message)
+                else:
+                    await ctx.send("No players found with that search term.")
 
         except FileNotFoundError:
             await ctx.send("Players database not found.")
