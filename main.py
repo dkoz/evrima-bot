@@ -14,6 +14,14 @@ async def on_ready():
     print(f'We have logged in as {bot.user}, created by KoZ')
 
 @bot.event
+async def on_guild_join(guild):
+    print(f"Joined guild: {guild.name} (ID: {guild.id})")
+
+@bot.event
+async def on_guild_remove(guild):
+    print(f"Left guild: {guild.name} (ID: {guild.id})")
+
+@bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         await ctx.send("Command not found.")
