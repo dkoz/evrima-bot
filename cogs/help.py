@@ -3,23 +3,52 @@ from nextcord.ext import commands
 from nextcord.ui import Button, View
 from config import BOT_PREFIX
 
+class HelpView(View):
+    def __init__(self, bot, prefix):
+        super().__init__()
+        self.bot = bot
+        self.prefix = prefix
+        self.current_page = 0
+
+    async def generate_help_embed(self):
+        embed = nextcord.Embed(title="Help Menu", description="List of all available commands.", color=nextcord.Color.blue())
+        embed.set_footer(text=f"Page {self.current_page + 1}", icon_url=self.bot.user.avatar.url)
+
+        commands = [command for command in self.bot.commands if not command.hidden and command.enabled]
+        start = self.current_page * 5
+        end = min(start + 5, len(commands))
+
+        for command in commands[start:end]:
+            embed.add_field(name=f"`{self.prefix}{command.name}`", value=command.description or "No description", inline=False)
+
+        return embed
+
+    async def update_help_message(self, interaction):
+        embed = await self.generate_help_embed()
+        await interaction.response.edit_message(embed=embed, view=self)
+
+    @nextcord.ui.button(label="Previous", style=nextcord.ButtonStyle.grey)
+    async def previous_button_callback(self, button, interaction):
+        if self.current_page > 0:
+            self.current_page -= 1
+            await self.update_help_message(interaction)
+
+    @nextcord.ui.button(label="Next", style=nextcord.ButtonStyle.grey)
+    async def next_button_callback(self, button, interaction):
+        if (self.current_page + 1) * 5 < len([command for command in self.bot.commands if not command.hidden and command.enabled]):
+            self.current_page += 1
+            await self.update_help_message(interaction)
+
 class EvrimaHelp(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @nextcord.slash_command(description="Shows a list of available commands.")
     async def help(self, interaction: nextcord.Interaction):
-        bot_avatar_url = self.bot.user.avatar.url
-        prefix = BOT_PREFIX
+        view = HelpView(self.bot, BOT_PREFIX)
+        embed = await view.generate_help_embed()
+        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
-        embed = nextcord.Embed(title="Help Menu", description=f"List of all available commands.", color=nextcord.Color.blue())
-        embed.set_footer(text="Created by Koz", icon_url=bot_avatar_url)
-
-        for command in self.bot.commands:
-            if not command.hidden and command.enabled:
-                embed.add_field(name=f"`{prefix}{command.name}`", value=command.description or "No description", inline=False)
-
-        await interaction.response.send_message(embed=embed, ephemeral=True)
 
     # Please do not remove the about me section. I've spent a lot of time on this bot and I would appreciate it if you left it in.
     @nextcord.slash_command(description="Information about the Evrima Rcon bot.")
