@@ -5,9 +5,12 @@ class Utility(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(description="Shows list of guilds the bot is in.", hidden=True)
-    @commands.is_owner()
-    async def guilds(self, ctx):
+    @nextcord.slash_command(description="Get the bot's latency.", default_member_permissions=nextcord.Permissions(administrator=True))
+    async def ping(self, interaction: nextcord.Interaction):
+        await interaction.response.send_message(f"Pong! {round(self.bot.latency * 1000)}ms")
+
+    @nextcord.slash_command(description="Shows list of guilds the bot is in.", default_member_permissions=nextcord.Permissions(administrator=True))
+    async def guilds(self, interaction: nextcord.Interaction):
         guilds = self.bot.guilds
 
         embed = nextcord.Embed(title="Guilds", description="List of Guilds", color=nextcord.Color.blue())
@@ -16,14 +19,13 @@ class Utility(commands.Cog):
         
         embed.set_footer(text="Created by KoZ")
 
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
-    @commands.command(description="Get detailed statistics of the server.")
-    @commands.is_owner()
-    async def serverstats(self, ctx):
-        guild = ctx.guild
+    @nextcord.slash_command(description="Get detailed statistics of the server.", default_member_permissions=nextcord.Permissions(administrator=True))
+    async def serverstats(self, interaction: nextcord.Interaction):
+        guild = interaction.guild
         if guild is None:
-            await ctx.send("This command can only be used in a server.")
+            await interaction.response.send_message("This command can only be used in a server.")
             return
 
         online_members = sum(1 for member in guild.members if member.status != nextcord.Status.offline)
@@ -41,12 +43,11 @@ class Utility(commands.Cog):
         embed.add_field(name="Server Creation Date", value=guild.created_at.strftime("%Y-%m-%d %H:%M:%S"), inline=True)
         embed.set_thumbnail(url=guild.icon.url if guild.icon else None)
 
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
-    @commands.command(description="Get information about a user.")
-    @commands.is_owner()
-    async def userinfo(self, ctx, member: nextcord.Member = None):
-        member = member or ctx.author
+    @nextcord.slash_command(description="Get information about a user.", default_member_permissions=nextcord.Permissions(administrator=True))
+    async def userinfo(self, interaction: nextcord.Interaction, member: nextcord.Member = None):
+        member = member or interaction.user
         roles = [role.name for role in member.roles[1:]]
 
         embed = nextcord.Embed(title=f"User Information - {member}", color=0x00ff00)
@@ -59,7 +60,16 @@ class Utility(commands.Cog):
         embed.add_field(name="Roles", value=", ".join(roles) if roles else "No Roles", inline=False)
         embed.set_thumbnail(url=member.avatar.url if member.avatar else None)
 
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
 def setup(bot):
-    bot.add_cog(Utility(bot))
+    cog = Utility(bot)
+    bot.add_cog(cog)
+    if not hasattr(bot, 'all_slash_commands'):
+        bot.all_slash_commands = []
+    bot.all_slash_commands.extend([
+        cog.ping,
+        cog.guilds,
+        cog.serverstats,
+        cog.userinfo
+    ])

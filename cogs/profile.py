@@ -99,4 +99,12 @@ class PlayerProfileLinker(commands.Cog):
             await interaction.response.send_message("Players database not found.", ephemeral=True)
 
 def setup(bot):
-    bot.add_cog(PlayerProfileLinker(bot))
+    cog = PlayerProfileLinker(bot)
+    bot.add_cog(cog)
+    if not hasattr(bot, 'all_slash_commands'):
+        bot.all_slash_commands = []
+    bot.all_slash_commands.extend([
+        cog.linkaccount,
+        cog.me,
+        cog.findplayer
+    ])

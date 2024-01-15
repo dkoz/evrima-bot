@@ -46,21 +46,19 @@ class GameIniAdminManager(commands.Cog):
         self.ftp_password = FTP_PASS
         self.ini_file_path = "/TheIsle/Saved/Config/LinuxServer/Game.ini"
 
-    @commands.command()
-    @commands.has_permissions(administrator=True)
-    async def addadmin(self, ctx, steam_id: str):
+    @nextcord.slash_command(name="addadmin" ,description="Add admin to the server.", default_member_permissions=nextcord.Permissions(administrator=True))
+    async def addadmin(self, interaction: nextcord.Interaction, steam_id: str):
         if await self.modify_admins(steam_id, add=True):
-            await ctx.send(f"Admin {steam_id} added successfully.")
+            await interaction.response.send_message(f"Admin {steam_id} added successfully.", ephemeral=True)
         else:
-            await ctx.send("Failed to add admin.")
+            await interaction.response.send_message("Failed to add admin.", ephemeral=True)
 
-    @commands.command()
-    @commands.has_permissions(administrator=True)
-    async def removeadmin(self, ctx, steam_id: str):
+    @nextcord.slash_command(description="Remove admin from the server.", default_member_permissions=nextcord.Permissions(administrator=True))
+    async def removeadmin(self, interaction: nextcord.Interaction, steam_id: str):
         if await self.modify_admins(steam_id, add=False):
-            await ctx.send(f"Admin {steam_id} removed successfully.")
+            await interaction.response.send_message(f"Admin {steam_id} removed successfully.", ephemeral=True)
         else:
-            await ctx.send("Failed to remove admin.")
+            await interaction.response.send_message("Failed to remove admin.", ephemeral=True)
 
     async def modify_admins(self, steam_id, add=True):
         loop = asyncio.get_running_loop()
@@ -106,6 +104,13 @@ class GameIniAdminManager(commands.Cog):
 
 def setup(bot):
     if ENABLE_INJECTIONS:
-        bot.add_cog(GameIniAdminManager(bot))
+        cog = GameIniAdminManager(bot)
+        bot.add_cog(cog)
+        if not hasattr(bot, 'all_slash_commands'):
+            bot.all_slash_commands = []
+        bot.all_slash_commands.extend([
+            cog.addadmin,
+            cog.removeadmin
+        ])
     else:
-        print("Admin Injections cog disabled.")
+        print("Admin injection cog disabled.")

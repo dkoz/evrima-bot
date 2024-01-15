@@ -61,10 +61,12 @@ class EvrimaMonitorCog(commands.Cog):
         return self.parse_player_list(response)
 
     def parse_player_list(self, response):
-        lines = response.split('\n')
-        lines = [line.strip() for line in lines if line.strip()]
-        player_count = len(lines) // 2
-        return player_count
+        if response.startswith("PlayerList"):
+            players = response.split(',')[1:]
+            player_count = len(players) // 2
+            return player_count
+        else:
+            return 0
 
     @nextcord.slash_command(description='Post a live tracker of your game server.', default_member_permissions=nextcord.Permissions(administrator=True))
     async def postserver(self, interaction: nextcord.Interaction, channel: nextcord.TextChannel):
@@ -86,4 +88,10 @@ class EvrimaMonitorCog(commands.Cog):
         self.update_bot_activity.cancel()
 
 def setup(bot):
-    bot.add_cog(EvrimaMonitorCog(bot))
+    cog = EvrimaMonitorCog(bot)
+    bot.add_cog(cog)
+    if not hasattr(bot, 'all_slash_commands'):
+        bot.all_slash_commands = []
+    bot.all_slash_commands.extend([
+        cog.postserver
+    ])

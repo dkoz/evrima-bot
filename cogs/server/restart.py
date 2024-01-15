@@ -41,15 +41,9 @@ class RestartServer(commands.Cog):
         except Exception as e:
             print(f'Error during restart: {e}')
 
-    @commands.command(description="Automatically restart the game server with announcements.")
-    @commands.is_owner()
-    async def forcerestart(self, server_id: str, wait_time: int = 300):
-        channel = self.bot.get_channel(self.report_channel)
-        if channel:
-            await channel.send("Server restart initiated. Restarting in 5 minutes.")
-        else:
-            print("Announcement channel not found.")
-
+    @nextcord.slash_command(description="Restart the game server.", default_member_permissions=nextcord.Permissions(administrator=True))
+    async def restart(self, interaction: nextcord.Interaction, server_id: str, wait_time: int = 300):
+        await interaction.response.send_message("Server restart initiated. Restarting in 5 minutes.", ephemeral=True)
         await self.perform_restart(server_id, wait_time)
 
     @tasks.loop(minutes=1)
@@ -70,6 +64,12 @@ class RestartServer(commands.Cog):
 
 def setup(bot):
     if ENABLE_RESTART:
-        bot.add_cog(RestartServer(bot))
+        cog = RestartServer(bot)
+        bot.add_cog(cog)
+        if not hasattr(bot, 'all_slash_commands'):
+            bot.all_slash_commands = []
+        bot.all_slash_commands.extend([
+            cog.restart
+        ])
     else:
-        print("Restart cog is disabled.")
+        print("RestartServer cog disabled.")

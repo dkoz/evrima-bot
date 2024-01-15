@@ -1,31 +1,25 @@
 import nextcord
 from nextcord.ext import commands
 from nextcord.ui import Button, View
-from config import BOT_PREFIX
 
 class HelpView(View):
-    def __init__(self, bot, prefix):
+    def __init__(self, bot):
         super().__init__()
         self.bot = bot
-        self.prefix = prefix
         self.current_page = 0
 
     async def generate_help_embed(self):
         embed = nextcord.Embed(title="Help Menu", description="List of all available commands.", color=nextcord.Color.blue())
         embed.set_footer(text=f"Page {self.current_page + 1}", icon_url=self.bot.user.avatar.url)
 
-        commands = [command for command in self.bot.commands if not command.hidden and command.enabled]
-        start = self.current_page * 5
-        end = min(start + 5, len(commands))
+        commands = self.bot.all_slash_commands if hasattr(self.bot, 'all_slash_commands') else []
+        start = self.current_page * 6
+        end = min(start + 6, len(commands))
 
         for command in commands[start:end]:
-            embed.add_field(name=f"`{self.prefix}{command.name}`", value=command.description or "No description", inline=False)
+            embed.add_field(name=f"`/{command.name}`", value=command.description or "No description", inline=True)
 
         return embed
-
-    async def update_help_message(self, interaction):
-        embed = await self.generate_help_embed()
-        await interaction.response.edit_message(embed=embed, view=self)
 
     @nextcord.ui.button(label="Previous", style=nextcord.ButtonStyle.grey)
     async def previous_button_callback(self, button, interaction):
@@ -35,9 +29,14 @@ class HelpView(View):
 
     @nextcord.ui.button(label="Next", style=nextcord.ButtonStyle.grey)
     async def next_button_callback(self, button, interaction):
-        if (self.current_page + 1) * 5 < len([command for command in self.bot.commands if not command.hidden and command.enabled]):
+        if (self.current_page + 1) * 6 < len(self.bot.all_slash_commands if hasattr(self.bot, 'all_slash_commands') else []):
             self.current_page += 1
             await self.update_help_message(interaction)
+
+    async def update_help_message(self, interaction):
+        embed = await self.generate_help_embed()
+        await interaction.response.edit_message(embed=embed, view=self)
+
 
 class EvrimaHelp(commands.Cog):
     def __init__(self, bot):
@@ -45,10 +44,9 @@ class EvrimaHelp(commands.Cog):
 
     @nextcord.slash_command(description="Shows a list of available commands.")
     async def help(self, interaction: nextcord.Interaction):
-        view = HelpView(self.bot, BOT_PREFIX)
+        view = HelpView(self.bot)
         embed = await view.generate_help_embed()
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
-
 
     # Please do not remove the about me section. I've spent a lot of time on this bot and I would appreciate it if you left it in.
     @nextcord.slash_command(description="Information about the Evrima Rcon bot.")
