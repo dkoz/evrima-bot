@@ -5,7 +5,7 @@ import os
 import re
 import asyncio
 from config import FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER
-from config import ENABLE_LOGGING, CHATLOG_CHANNEL
+from config import ENABLE_LOGGING, CHATLOG_CHANNEL, FILE_PATH
 
 class LogChat(commands.Cog):
     def __init__(self, bot):
@@ -14,7 +14,7 @@ class LogChat(commands.Cog):
         self.ftp_port = FTP_PORT
         self.ftp_username = FTP_USER
         self.ftp_password = FTP_PASS
-        self.filepath = "/TheIsle/Saved/Logs/TheIsle.log"
+        self.filepath = FILE_PATH
         self.chat_log_channel_id = CHATLOG_CHANNEL
         self.last_position = None
 
@@ -46,7 +46,6 @@ class LogChat(commands.Cog):
         return file_content, new_position
 
     def parse_chat_messages(self, file_content):
-        # Updated pattern to capture SteamID64
         pattern = r"LogTheIsleChatData: Verbose: \[.*?\] \[.*?\] \[.*?\] (.*?) \[(\d+)\]: (.*)"
         matches = re.findall(pattern, file_content)
 
@@ -73,7 +72,6 @@ class LogChat(commands.Cog):
         channel = self.bot.get_channel(self.chat_log_channel_id)
         if channel:
             for message in chat_messages:
-                # Updated content format to include SteamID64
                 content = f"{message['Player']} [{message['SteamID64']}]: {message['Message']}"
                 if len(content) > 2000:
                     content = content[:2000]

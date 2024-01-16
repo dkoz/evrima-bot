@@ -4,8 +4,8 @@ import paramiko
 import os
 import re
 import asyncio
-from config import FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER, ADMINLOG_CHANNEL
-from config import ENABLE_LOGGING
+from config import FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER
+from config import ENABLE_LOGGING, ADMINLOG_CHANNEL, FILE_PATH
 
 class CommandFeed(commands.Cog):
     def __init__(self, bot):
@@ -14,7 +14,7 @@ class CommandFeed(commands.Cog):
         self.ftp_port = FTP_PORT
         self.ftp_username = FTP_USER
         self.ftp_password = FTP_PASS
-        self.filepath = "/TheIsle/Saved/Logs/TheIsle.log"
+        self.filepath = FILE_PATH
         self.admin_log = ADMINLOG_CHANNEL
         self.last_position = None
 

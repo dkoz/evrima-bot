@@ -4,8 +4,8 @@ import paramiko
 import os
 import re
 import asyncio
-from config import FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER, KILLFEED_CHANNEL
-from config import ENABLE_LOGGING
+from config import FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER
+from config import ENABLE_LOGGING, KILLFEED_CHANNEL, FILE_PATH
 
 class KillFeed(commands.Cog):
     def __init__(self, bot):
@@ -14,7 +14,7 @@ class KillFeed(commands.Cog):
         self.ftp_port = FTP_PORT
         self.ftp_username = FTP_USER
         self.ftp_password = FTP_PASS
-        self.filepath = "/TheIsle/Saved/Logs/TheIsle.log"
+        self.filepath = FILE_PATH
         self.kill_feed_channel_id = KILLFEED_CHANNEL
         self.last_position = None
 

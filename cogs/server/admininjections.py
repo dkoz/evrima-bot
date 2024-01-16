@@ -5,7 +5,7 @@ import asyncio
 import io
 from collections import defaultdict
 from config import FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER
-from config import ENABLE_INJECTIONS
+from config import ENABLE_INJECTIONS, ADMIN_FILE_PATH
 
 class MultiKeyConfigParser:
     def __init__(self):
@@ -44,7 +44,7 @@ class GameIniAdminManager(commands.Cog):
         self.ftp_port = FTP_PORT
         self.ftp_username = FTP_USER
         self.ftp_password = FTP_PASS
-        self.ini_file_path = "/TheIsle/Saved/Config/LinuxServer/Game.ini"
+        self.ini_file_path = ADMIN_FILE_PATH
 
     @nextcord.slash_command(name="addadmin" ,description="Add admin to the server.", default_member_permissions=nextcord.Permissions(administrator=True))
     async def addadmin(self, interaction: nextcord.Interaction, steam_id: str):

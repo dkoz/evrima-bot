@@ -5,10 +5,9 @@ import os
 import json
 import re
 import asyncio
-from config import ENABLE_LOGGING, FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER
+from config import FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER
+from config import ENABLE_LOGGING, FILE_PATH
 
-# This is highly experimental and is not completed yet.
-# This has to be enable inside your ENV file.
 class LogPlayers(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -16,7 +15,7 @@ class LogPlayers(commands.Cog):
         self.ftp_port = FTP_PORT
         self.ftp_username = FTP_USER
         self.ftp_password = FTP_PASS
-        self.filepath = "/TheIsle/Saved/Logs/TheIsle.log"
+        self.filepath = FILE_PATH
         self.json_file = "players.json"
         self.update_task = self.update_players_background.start()
 
@@ -93,7 +92,7 @@ class LogPlayers(commands.Cog):
             with open(json_file, "w", encoding="utf-8") as file:
                 json.dump(player_data, file, indent=4)
 
-    @commands.command(description="Update the players database.")
+    @commands.command(description="Manually update the player database.")
     @commands.is_owner()
     async def updateplayers(self, ctx):
         file_content = await self.async_sftp_operation(self.read_file, self.filepath)
@@ -104,7 +103,7 @@ class LogPlayers(commands.Cog):
         else:
             await ctx.send("Failed to connect to SFTP server.")
 
-    @commands.command()
+    @commands.command(description="Manually list all players in the database.")
     @commands.is_owner()
     async def listplayers(self, ctx):
         data_folder = "data"

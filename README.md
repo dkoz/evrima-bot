@@ -14,6 +14,8 @@ FTP_HOST | Host information for the FTP connection.
 FTP_PORT | Port number for the FTP connection.
 FTP_USER | Username for FTP access.
 FTP_PASS | Password for your FTP account.
+FILE_PATH | File path to `TheIsle.log` file.
+ADMIN_FILE_PATH | File path to your `Game.ini` file.
 ENABLE_INJECTIONS | Enable admin injections for your bot.
 SERVERNAME | The name of the server.
 MAXPLAYERS | Maximum number of players allowed on the server.
