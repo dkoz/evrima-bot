@@ -44,6 +44,26 @@ class PlayerProfileLinker(commands.Cog):
 
         await interaction.response.send_message("Account linked successfully.")
 
+    @nextcord.slash_command(name="unlinkaccount", description="Unlink your Discord account from your in-game profile")
+    async def unlinkaccount(self, interaction: nextcord.Interaction):
+        discord_id = str(interaction.user.id)
+
+        if not os.path.exists(self.linked_accounts_file):
+            await interaction.response.send_message("No linked accounts found.")
+            return
+
+        with open(self.linked_accounts_file, "r+", encoding="utf-8") as file:
+            linked_accounts = json.load(file)
+
+            if discord_id in linked_accounts:
+                del linked_accounts[discord_id]
+                file.seek(0)
+                file.truncate()
+                json.dump(linked_accounts, file, indent=4)
+                await interaction.response.send_message("Your account has been unlinked successfully.")
+            else:
+                await interaction.response.send_message("Your Discord account is not linked.")
+
     @nextcord.slash_command(name="me", description="Display your linked in-game profile information")
     async def me(self, interaction: nextcord.Interaction):
         discord_id = str(interaction.user.id)
@@ -105,6 +125,7 @@ def setup(bot):
         bot.all_slash_commands = []
     bot.all_slash_commands.extend([
         cog.linkaccount,
+        cog.unlinkaccount,
         cog.me,
         cog.findplayer
     ])
