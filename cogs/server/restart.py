@@ -1,7 +1,7 @@
 import asyncio
 import nextcord
 from nextcord.ext import commands, tasks
-from util.functions import evrima_rcon
+from gamercon_async import EvrimaRCON
 from pydactyl import PterodactylClient
 from datetime import datetime
 import pytz
@@ -23,7 +23,9 @@ class RestartServer(commands.Cog):
 
     async def perform_restart(self, server_id, wait_time):
         announce_command = bytes('\x02', 'utf-8') + bytes('\x10', 'utf-8') + "Server restarting in 5 minutes.".encode() + bytes('\x00', 'utf-8')
-        await evrima_rcon(self.rcon_host, self.rcon_port, self.rcon_password, announce_command)
+        evrima_client = EvrimaRCON(self.rcon_host, self.rcon_port, self.rcon_password)
+        await evrima_client.connect()
+        await evrima_client.send_command(announce_command)
 
         await asyncio.sleep(wait_time)
 
@@ -40,6 +42,7 @@ class RestartServer(commands.Cog):
                 print(f'Failed to send kill command: {kill_response.status_code} {kill_response.text}')
         except Exception as e:
             print(f'Error during restart: {e}')
+
 
     @nextcord.slash_command(description="Restart the game server.", default_member_permissions=nextcord.Permissions(administrator=True))
     async def restart(self, interaction: nextcord.Interaction, server_id: str, wait_time: int = 300):

@@ -1,6 +1,7 @@
-nextcord
-python-dotenv
-paramiko
+nextcord==2.6.0
+python-dotenv==1.0.0
+paramiko==3.3.1
+gamercon-async==1.0.2
 py-dactyl
-aiohttp
+aiohttp==3.9.0
 pytz

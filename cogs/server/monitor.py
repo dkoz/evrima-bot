@@ -2,7 +2,7 @@ import nextcord
 from nextcord.ext import commands, tasks
 from config import RCON_HOST, RCON_PORT, RCON_PASS
 from config import SERVERNAME, MAXPLAYERS, CURRENTMAP
-from util.functions import evrima_rcon
+from gamercon_async import EvrimaRCON
 from util.functions import saveserverinfo, loadserverinfo
 
 class EvrimaMonitorCog(commands.Cog):
@@ -57,7 +57,7 @@ class EvrimaMonitorCog(commands.Cog):
 
     async def get_player_count(self):
         command = bytes('\x02', 'utf-8') + bytes('\x40', 'utf-8') + bytes('\x00', 'utf-8')
-        response = await evrima_rcon(self.rcon_host, self.rcon_port, self.rcon_password, command)
+        response = await EvrimaRCON(self.rcon_host, self.rcon_port, self.rcon_password).send_command(command)
         return self.parse_player_list(response)
 
     def parse_player_list(self, response):
