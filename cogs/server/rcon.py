@@ -11,7 +11,6 @@ class EvrimaRcon(commands.Cog):
         self.rcon_host = RCON_HOST
         self.rcon_password = RCON_PASS
         self.rcon_port = RCON_PORT
-        self.timeout = 30
 
     @nextcord.slash_command(description="Evrima RCON Commands", default_member_permissions=nextcord.Permissions(administrator=True))
     async def rcon(self, _interaction: nextcord.Interaction):
@@ -59,7 +58,7 @@ class EvrimaRcon(commands.Cog):
         await interaction.response.send_message(f"RCON response: {response}", ephemeral=True)
 
     async def run_rcon(self, command):
-        rcon = EvrimaRCON(self.rcon_host, self.rcon_port, self.rcon_password, self.timeout)
+        rcon = EvrimaRCON(self.rcon_host, self.rcon_port, self.rcon_password)
         await rcon.connect()
         return await rcon.send_command(command)
 
