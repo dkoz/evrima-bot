@@ -52,13 +52,31 @@ class KillFeed(commands.Cog):
         kill_feed = []
         for match in matches:
             time, killer, killer_id, killer_dino, death_type, victim, victim_id, victim_dino = match
-            if 'Died from Natural cause' in death_type:
-                message = f"[{time}] {killer} [{killer_id}] {killer_dino} died from natural causes."
-            elif 'Killed the following player' in death_type:
-                message = f"[{time}] {killer} [{killer_id}] {killer_dino} killed {victim} [{victim_id}] {victim_dino}."
-            else:
-                message = f"[{time}] Unknown death event."
+            #if 'Died from Natural cause' in death_type:
+            #    message = f"[{time}] {killer} [{killer_id}] {killer_dino} died from natural causes."
+            #elif 'Killed the following player' in death_type:
+            #    message = f"[{time}] {killer} [{killer_id}] {killer_dino} killed {victim} [{victim_id}] {victim_dino}."
+            #else:
+            #    message = f"[{time}] Unknown death event."
 
+            #kill_feed.append(message)
+
+            # format in embed
+            if 'Died from Natural cause' in death_type:
+                message = nextcord.Embed(
+                    title="Kill Feed",
+                    description=f"{killer} [{killer_id}] {killer_dino} died from natural causes."
+                )
+            elif 'Killed the following player' in death_type:
+                message = nextcord.Embed(
+                    title="Kill Feed",
+                    description=f"{killer} [{killer_id}] {killer_dino} killed {victim} [{victim_id}] {victim_dino}."
+                )
+            else:
+                message = nextcord.Embed(
+                    title="Kill Feed",
+                    description="Unknown death event."
+                )
             kill_feed.append(message)
         return kill_feed
 
@@ -80,7 +98,7 @@ class KillFeed(commands.Cog):
                     message = message[:2000]
 
                 try:
-                    await channel.send(message)
+                    await channel.send(embed=message)
                 except Exception as e:
                     print(f"Error sending message: {e}")
         else:

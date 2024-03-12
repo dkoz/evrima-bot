@@ -58,7 +58,7 @@ class LogChat(commands.Cog):
             })
         return chat_messages
 
-    @tasks.loop(seconds=30)
+    @tasks.loop(seconds=10)
     async def check_chat_log(self):
         file_content, new_position = await self.async_sftp_operation(
             self.read_file, self.filepath, self.last_position
@@ -72,12 +72,18 @@ class LogChat(commands.Cog):
         channel = self.bot.get_channel(self.chat_log_channel_id)
         if channel:
             for message in chat_messages:
-                content = f"{message['Player']} [{message['SteamID64']}]: {message['Message']}"
-                if len(content) > 2000:
-                    content = content[:2000]
+                #content = f"{message['Player']} [{message['SteamID64']}]: {message['Message']}"
+                #if len(content) > 2000:
+                #    content = content[:2000]
 
+                #try:
+                #    await channel.send(content)
+                content = nextcord.Embed(
+                    title="Chat Log",
+                    description=f"{message['Player']} [{message['SteamID64']}]: {message['Message']}",
+                )
                 try:
-                    await channel.send(content)
+                    await channel.send(embed=content)
                 except Exception as e:
                     print(f"Error sending message: {e}")
         else:

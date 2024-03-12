@@ -52,11 +52,21 @@ class CommandFeed(commands.Cog):
         admin_commands = []
         for match in matches:
             timestamp, admin_name, steam_id, command, target, target_id, target_class, target_gender, prev_value, new_value = match
-            message = f"[{timestamp}] {admin_name} [{steam_id}] used command: {command} on {target} [{target_id}], Class: {target_class}, Gender: {target_gender}, Previous value: {prev_value}, New value: {new_value}%"
+            # format in embed
+            # message = f"[{timestamp}] {admin_name} [{steam_id}] used command: {command} on {target} [{target_id}], Class: {target_class}, Gender: {target_gender}, Previous value: {prev_value}, New value: {new_value}%"
+            message = nextcord.Embed(
+                title="Admin Log",
+                description=f"{admin_name} [{steam_id}] used command: {command}",
+            )
+            message.add_field(name="Target", value=f"{target} ({target_id})", inline=False)
+            message.add_field(name="Class", value=f"{target_class}", inline=True)
+            message.add_field(name="Gender", value=f"{target_gender}", inline=True)
+            message.add_field(name="Previous Value", value=f"{prev_value}", inline=True)
+            message.add_field(name="New Value", value=f"{new_value}", inline=True)
             admin_commands.append(message)
         return admin_commands
 
-    @tasks.loop(seconds=30)
+    @tasks.loop(seconds=10)
     async def check_admin_commands(self):
         file_content, new_position = await self.async_sftp_operation(
             self.read_file, self.filepath, self.last_position
@@ -74,7 +84,7 @@ class CommandFeed(commands.Cog):
                     message = message[:2000]
 
                 try:
-                    await channel.send(message)
+                    await channel.send(embed=message)
                 except Exception as e:
                     print(f"Error sending message: {e}")
         else:

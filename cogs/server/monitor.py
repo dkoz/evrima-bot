@@ -11,6 +11,7 @@ class EvrimaMonitorCog(commands.Cog):
         self.rcon_host = RCON_HOST
         self.rcon_port = RCON_PORT
         self.rcon_password = RCON_PASS
+        self.timeout = 30
         self.update_player_count.start()
         self.update_bot_activity.start()
 
@@ -57,7 +58,7 @@ class EvrimaMonitorCog(commands.Cog):
 
     async def get_player_count(self):
         command = bytes('\x02', 'utf-8') + bytes('\x40', 'utf-8') + bytes('\x00', 'utf-8')
-        response = await EvrimaRCON(self.rcon_host, self.rcon_port, self.rcon_password).send_command(command)
+        response = await EvrimaRCON(self.rcon_host, self.rcon_port, self.rcon_password, self.timeout).send_command(command)
         return self.parse_player_list(response)
 
     def parse_player_list(self, response):

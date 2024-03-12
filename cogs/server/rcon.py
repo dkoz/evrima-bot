@@ -59,7 +59,7 @@ class EvrimaRcon(commands.Cog):
         await interaction.response.send_message(f"RCON response: {response}", ephemeral=True)
 
     async def run_rcon(self, command):
-        rcon = EvrimaRCON(self.rcon_host, self.rcon_port, self.rcon_password)
+        rcon = EvrimaRCON(self.rcon_host, self.rcon_port, self.rcon_password, self.timeout)
         await rcon.connect()
         return await rcon.send_command(command)
 
