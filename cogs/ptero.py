@@ -1,10 +1,7 @@
 import nextcord
 from nextcord.ext import commands
 from pydactyl import PterodactylClient
-import logging
 from config import PTERO_API, PTERO_URL, PTERO_WHITELIST, PTERO_ENABLE
-
-logging.basicConfig(level=logging.INFO)
 
 api = PterodactylClient(PTERO_URL, PTERO_API)
 
@@ -26,10 +23,10 @@ class PterodactylControls(commands.Cog):
             if response.status_code == 204:
                 await interaction.response.send_message(f'{action.capitalize()}ing server with ID "{server_id}".')
             else:
-                logging.error(f'Unexpected response: {response.status_code} {response.text}')
+                print(f'Unexpected response: {response.status_code} {response.text}')
                 await interaction.response.send_message(f'Unexpected response: {response.status_code} {response.text}', ephemeral=True)
         except Exception as e:
-            logging.error(f'You have an error: {e}')
+            print(f'You have an error: {e}')
             await interaction.response.send_message(f'You have an error: {e}', ephemeral=True)
 
     @nextcord.slash_command(description="Pterodactyl Controls", default_member_permissions=nextcord.Permissions(administrator=True))
@@ -75,7 +72,7 @@ class PterodactylControls(commands.Cog):
         try:
             server_info = api.client.servers.get_server(server_id)
             if not isinstance(server_info, dict):
-                logging.error(f'Invalid response format: {server_info}')
+                print(f'Invalid response format: {server_info}')
                 await interaction.response.send_message('Error: Invalid response format from the API.', ephemeral=True)
                 return
 
@@ -96,7 +93,7 @@ class PterodactylControls(commands.Cog):
 
             await interaction.response.send_message(embed=embed, ephemeral=True)
         except Exception as e:
-            logging.error(f'Error: {e}')
+            print(f'Error: {e}')
             await interaction.response.send_message(f'Error: {e}', ephemeral=True)
 
 def setup(bot):
@@ -114,4 +111,4 @@ def setup(bot):
             cog.info
         ])
     else:
-        logging.info('Pterodactyl controls disabled.')
+        print("Pterodactyl Controls are disabled.")
