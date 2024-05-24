@@ -14,19 +14,19 @@ class EvrimaWhitelist(commands.Cog):
     async def whitelist(self, _interaction: nextcord.Interaction):
         pass
 
-    @whitelist.subcommand(description="Add a player to the whitelist.")
+    @whitelist.subcommand(name="add", description="Add a player to the whitelist.")
     async def addwhitelist(self, interaction: nextcord.Interaction, eos_id: str):
         command = bytes('\x02', 'utf-8') + bytes('\x82', 'utf-8') + eos_id.encode() + bytes('\x00', 'utf-8')
         response = await self.run_rcon(command)
         await interaction.response.send_message(f"RCON response: {response}", ephemeral=True)
         
-    @whitelist.subcommand(description="Remove a player from the whitelist.")
+    @whitelist.subcommand(name="remove", description="Remove a player from the whitelist.")
     async def removewhitelist(self, interaction: nextcord.Interaction, eos_id: str):
         command = bytes('\x02', 'utf-8') + bytes('\x83', 'utf-8') + eos_id.encode() + bytes('\x00', 'utf-8')
         response = await self.run_rcon(command)
         await interaction.response.send_message(f"RCON response: {response}", ephemeral=True)
         
-    @whitelist.subcommand(description="Enable the whitelist.")
+    @whitelist.subcommand(name="enable", description="Enable the whitelist.")
     async def enablewhitelist(self, interaction: nextcord.Interaction):
         await interaction.response.send_message("Enabling the whitelist for your server.", ephemeral=True)
         command = bytes('\x02', 'utf-8') + bytes('\x81', 'utf-8') + bytes('\x00', 'utf-8')
