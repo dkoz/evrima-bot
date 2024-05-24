@@ -3,6 +3,9 @@
 
  This is a discord RCON bot for The Isle: Evrima. (This is not an injection bot!)
 
+## Important
+ Most of the functionality of this bot is designed for the Pterodactyl game panel. This bot will not work properly without it. The only function that will run without the panel is RCON.
+
 ## Optional Environmental Variables
 Variable | Description
 --- | ---
