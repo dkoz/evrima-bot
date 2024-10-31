@@ -1,7 +1,8 @@
 
 *.pyc
-.env
+*.env
 *.json
 util/eos.py
 util/tracker.py
+/venv/*
 cogs_disabled/*

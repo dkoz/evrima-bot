@@ -65,17 +65,17 @@ class KillFeed(commands.Cog):
             if 'Died from Natural cause' in death_type:
                 message = nextcord.Embed(
                     title="Kill Feed",
-                    description=f"{killer} [{killer_id}] {killer_dino} died from natural causes."
+                    description=f"[{time}] {killer} [{killer_id}] {killer_dino} died from natural causes."
                 )
             elif 'Killed the following player' in death_type:
                 message = nextcord.Embed(
                     title="Kill Feed",
-                    description=f"{killer} [{killer_id}] {killer_dino} killed {victim} [{victim_id}] {victim_dino}."
+                    description=f"[{time}] {killer} [{killer_id}] {killer_dino} killed {victim} [{victim_id}] {victim_dino}."
                 )
             else:
                 message = nextcord.Embed(
                     title="Kill Feed",
-                    description="Unknown death event."
+                    description=f"[{time}] Unknown death event."
                 )
             kill_feed.append(message)
         return kill_feed

@@ -56,7 +56,7 @@ class CommandFeed(commands.Cog):
             # message = f"[{timestamp}] {admin_name} [{steam_id}] used command: {command} on {target} [{target_id}], Class: {target_class}, Gender: {target_gender}, Previous value: {prev_value}, New value: {new_value}%"
             message = nextcord.Embed(
                 title="Admin Log",
-                description=f"{admin_name} [{steam_id}] used command: {command}",
+                description=f"[{timestamp}] {admin_name} [{steam_id}] used command: {command}",
             )
             message.add_field(name="Target", value=f"{target} ({target_id})", inline=False)
             message.add_field(name="Class", value=f"{target_class}", inline=True)

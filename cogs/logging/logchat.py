@@ -72,12 +72,6 @@ class LogChat(commands.Cog):
         channel = self.bot.get_channel(self.chat_log_channel_id)
         if channel:
             for message in chat_messages:
-                #content = f"{message['Player']} [{message['SteamID64']}]: {message['Message']}"
-                #if len(content) > 2000:
-                #    content = content[:2000]
-
-                #try:
-                #    await channel.send(content)
                 content = nextcord.Embed(
                     title="Chat Log",
                     description=f"{message['Player']} [{message['SteamID64']}]: {message['Message']}",

@@ -53,20 +53,20 @@ class LogPlayers(commands.Cog):
         return file_content
 
     def parse_log_file(self, file_content):
-        pattern = r"LogNet: Login request: .*?Name=([^\s]+) userId: RedpointEOS:(\w+) platform: RedpointEOS.*?LogTemp: Warning: Player Connecting \.\. Steam_Id: (\d+)"
-        matches = re.findall(pattern, file_content, re.DOTALL)
+        pattern_steam_eos = r"Player Connecting .. Steam_Id: (\d+)\s*,\s*EOS_Id: (\w+)"
+        pattern_name = r"LogTheIsleJoinData:.*?(\w+)\s*\[\d+\] Joined The Server"
+
+        steam_eos_matches = re.findall(pattern_steam_eos, file_content)
+        name_matches = re.findall(pattern_name, file_content)
 
         player_data = []
         seen = set()
-        for match in matches:
-            player_tuple = (match[0], match[1], match[2])
-            if player_tuple not in seen:
-                seen.add(player_tuple)
-                player_data.append({
-                    "Name": match[0],
-                    "EOS_Id": match[1],
-                    "Steam_Id": match[2]
-                })
+
+        for (steam_id, eos_id), name in zip(steam_eos_matches, name_matches):
+            if (eos_id, steam_id) not in seen:
+                seen.add((eos_id, steam_id))
+                player_data.append({"Name": name, "EOS_Id": eos_id, "Steam_Id": steam_id})
+                
         return player_data
 
     def update_json(self, player_data):

@@ -1,5 +1,5 @@
 > [!IMPORTANT]  
-> This bot has been officially archived and will no longer receive updates. All support for this bot has been discontinued.
+> This bot has been officially archived and will no longer receive updates. All support for this bot has been discontinued. (I lied)
 # The Isle: Evrima Discord RCON Bot
 ![GitHub License](https://img.shields.io/github/license/dkoz/ascension-bot?style=flat-square) ![Discord](https://img.shields.io/discord/802778278200475658?style=flat-square&label=community) ![Discord](https://img.shields.io/discord/1009881575187566632?style=flat-square&label=support)
 
