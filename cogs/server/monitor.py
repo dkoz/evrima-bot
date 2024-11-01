@@ -37,8 +37,8 @@ class EvrimaMonitorCog(commands.Cog):
             command = bytes('\x02', 'utf-8') + bytes('\x12', 'utf-8') + bytes('\x00', 'utf-8')
             response = await rcon.send_command(command)
 
-            print(f"Raw RCON Response: {response}")
-
+            # This regex pattern is used to extract the rcon response into a dictionary.
+            # Not really using all of it but just making sure I extracted it.
             pattern = (
                 r"ServerDetailsServerName:\s*(.*?), "
                 r"ServerPassword:\s*(.*?), "

@@ -27,18 +27,23 @@ class EvrimaRcon(commands.Cog):
         response = await self.run_rcon(command)
         await interaction.response.send_message(f"RCON response: {response}", ephemeral=True)
 
-    @rcon.subcommand(description="Ban a player from the server.")
-    async def banplayer(self, interaction: nextcord.Interaction, eos_id: str, ban_length: int):
-        await interaction.response.send_message(f"Banning player with EOS ID {eos_id} for {ban_length} minutes.", ephemeral=True)
-        userinput = f"{eos_id}, You have been banned!, {ban_length}"
-        command = bytes('\x02', 'utf-8') + bytes('\x20', 'utf-8') + userinput.encode() + bytes('\x00', 'utf-8')
-        response = await self.run_rcon(command)
-        await interaction.followup.send(f"RCON response: {response}", ephemeral=True)
+    # Does not seem to be working as intended.
+    # Will look into this further.
+    # @rcon.subcommand(description="Ban a player from the server.")
+    # async def banplayer(self, interaction: nextcord.Interaction, user_id: str, reason: str, ban_length: int):
+    #     try:
+    #         await interaction.response.send_message(f"Banning player with User ID {user_id} for {ban_length} hours.\nReason: {reason}", ephemeral=True)
+    #         formatted_command = f"{user_id},{reason},{ban_length}"
+    #         command = bytes('\x02', 'utf-8') + bytes('\x20', 'utf-8') + formatted_command.encode() + bytes('\x00', 'utf-8')
+    #         response = await self.run_rcon(command)
+    #         await interaction.followup.send(f"RCON response: {response}", ephemeral=True)
+    #     except Exception as e:
+    #         await interaction.followup.send(f"An error occurred: {e}", ephemeral=True)
 
     @rcon.subcommand(description="Kick a player from the server.")
-    async def kickplayer(self, interaction: nextcord.Interaction, eos_id: str, reason: str):
-        await interaction.response.send_message(f"Kicking player steamid {eos_id}\nReason: {reason}", ephemeral=True)
-        formatted_command = f"{eos_id},{reason}"
+    async def kickplayer(self, interaction: nextcord.Interaction, user_id: str, reason: str):
+        await interaction.response.send_message(f"Kicking player with User ID {user_id}\nReason: {reason}", ephemeral=True)
+        formatted_command = f"{user_id},{reason}"
         command = bytes('\x02', 'utf-8') + bytes('\x30', 'utf-8') + formatted_command.encode() + bytes('\x00', 'utf-8')
         response = await self.run_rcon(command)
         await interaction.followup.send(f"RCON response: {response}", ephemeral=True)
@@ -66,11 +71,17 @@ class EvrimaRcon(commands.Cog):
         await interaction.response.send_message(f"RCON response: {response}", ephemeral=True)
         
     @rcon.subcommand(description="Get details about a player.")
-    async def playerinfo(self, interaction: nextcord.Interaction, eos_id: str):
+    async def playerinfo(self, interaction: nextcord.Interaction, user_id: str):
         await interaction.response.defer(ephemeral=True)
-        command = bytes('\x02', 'utf-8') + bytes('\x77', 'utf-8') + eos_id.encode() + bytes('\x00', 'utf-8')
+        command = bytes('\x02', 'utf-8') + bytes('\x77', 'utf-8') + user_id.encode() + bytes('\x00', 'utf-8')
         response = await self.run_rcon(command)
         await interaction.followup.send(f"RCON response: {response}", ephemeral=True)
+
+    @rcon.subcommand(description="Wipe all corpses from the server.")
+    async def wipecorpses(self, interaction: nextcord.Interaction):
+        command = bytes('\x02', 'utf-8') + bytes('\x13', 'utf-8') + bytes('\x00', 'utf-8')
+        response = await self.run_rcon(command)
+        await interaction.response.send_message(f"RCON response: {response}", ephemeral=True)
 
     async def run_rcon(self, command):
         rcon = EvrimaRCON(self.rcon_host, self.rcon_port, self.rcon_password)
