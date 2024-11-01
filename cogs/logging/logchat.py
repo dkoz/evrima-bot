@@ -46,42 +46,44 @@ class LogChat(commands.Cog):
         return file_content, new_position
 
     def parse_chat_messages(self, file_content):
-        pattern = r"LogTheIsleChatData: Verbose: \[.*?\] \[.*?\] \[.*?\] (.*?) \[(\d+)\]: (.*)"
+        pattern = r"\[LogTheIsleChatData\]: \[(.*?)\] \[(.*?)\] (.*?) \[(\d+)\]: (.*)"
         matches = re.findall(pattern, file_content)
 
         chat_messages = []
         for match in matches:
             chat_messages.append({
-                "Player": match[0],
-                "SteamID64": match[1],
-                "Message": match[2]
+                "Channel": match[0],
+                "Group": match[1],
+                "Player": match[2],
+                "SteamID64": match[3],
+                "Message": match[4]
             })
         return chat_messages
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=30)
     async def check_chat_log(self):
         file_content, new_position = await self.async_sftp_operation(
             self.read_file, self.filepath, self.last_position
         )
-        if self.last_position is None or new_position != self.last_position:
+        if self.last_position is not None and new_position > self.last_position:
             self.last_position = new_position
-            chat_messages = self.parse_chat_messages(file_content)
-            await self.send_chat_messages(chat_messages)
+            all_messages = file_content.strip().splitlines()
+            for message_line in all_messages:
+                chat_messages = self.parse_chat_messages(message_line + '\n')
+                await self.send_chat_messages(chat_messages)
+        elif self.last_position is None:
+            self.last_position = new_position
 
     async def send_chat_messages(self, chat_messages):
         channel = self.bot.get_channel(self.chat_log_channel_id)
         if channel:
             for message in chat_messages:
-                content = nextcord.Embed(
-                    title="Chat Log",
+                embed = nextcord.Embed(
+                    title=f"{message['Channel']} - {message['Group']}",
                     description=f"{message['Player']} [{message['SteamID64']}]: {message['Message']}",
                 )
-                try:
-                    await channel.send(embed=content)
-                except Exception as e:
-                    print(f"Error sending message: {e}")
-        else:
-            print("Channel not found or bot does not have permission to access it.")
+                await channel.send(embed=embed)
+                await asyncio.sleep(1)
 
 def setup(bot):
     if ENABLE_LOGGING:

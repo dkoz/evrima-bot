@@ -46,35 +46,51 @@ class CommandFeed(commands.Cog):
         return file_content, new_position
 
     def parse_admin_commands(self, file_content):
-        pattern = r"LogTheIsleCommandData: Verbose: \[(.*?)\] (.*?) \[(\d+)\] used command: (.*?) at: (.*?), \[(\d+)\], Class: (.*?), Gender: (.*?), Previous value: (.*?), New value: (.*?)%"
+        pattern = r"\[LogTheIsleCommandData\]: (.*?) \[(\d+)\] used command: (.*?)(?: at: (.*?), \[(\d+)\], Class: (.*?), Gender: (.*?), Previous value: (.*?), New value: (.*?)%)?$"
         matches = re.findall(pattern, file_content)
 
         admin_commands = []
         for match in matches:
-            timestamp, admin_name, steam_id, command, target, target_id, target_class, target_gender, prev_value, new_value = match
-            # format in embed
-            # message = f"[{timestamp}] {admin_name} [{steam_id}] used command: {command} on {target} [{target_id}], Class: {target_class}, Gender: {target_gender}, Previous value: {prev_value}, New value: {new_value}%"
-            message = nextcord.Embed(
+            admin_name, steam_id, command = match[:3]
+            target = match[3] if len(match) > 3 else None
+            target_id = match[4] if len(match) > 4 else None
+            target_class = match[5] if len(match) > 5 else None
+            target_gender = match[6] if len(match) > 6 else None
+            prev_value = match[7] if len(match) > 7 else None
+            new_value = match[8] if len(match) > 8 else None
+
+            embed = nextcord.Embed(
                 title="Admin Log",
-                description=f"[{timestamp}] {admin_name} [{steam_id}] used command: {command}",
+                description=f"{admin_name} [{steam_id}] used command: {command}",
             )
-            message.add_field(name="Target", value=f"{target} ({target_id})", inline=False)
-            message.add_field(name="Class", value=f"{target_class}", inline=True)
-            message.add_field(name="Gender", value=f"{target_gender}", inline=True)
-            message.add_field(name="Previous Value", value=f"{prev_value}", inline=True)
-            message.add_field(name="New Value", value=f"{new_value}", inline=True)
-            admin_commands.append(message)
+
+            if target:
+                embed.add_field(name="Target", value=f"{target} ({target_id})", inline=False)
+            if target_class:
+                embed.add_field(name="Class", value=target_class, inline=True)
+            if target_gender:
+                embed.add_field(name="Gender", value=target_gender, inline=True)
+            if prev_value:
+                embed.add_field(name="Previous Value", value=prev_value, inline=True)
+            if new_value:
+                embed.add_field(name="New Value", value=new_value, inline=True)
+
+            admin_commands.append(embed)
         return admin_commands
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=30)
     async def check_admin_commands(self):
         file_content, new_position = await self.async_sftp_operation(
             self.read_file, self.filepath, self.last_position
         )
-        if self.last_position is None or new_position != self.last_position:
+        if self.last_position is not None and new_position > self.last_position:
             self.last_position = new_position
-            admin_commands = self.parse_admin_commands(file_content)
-            await self.send_admin_commands(admin_commands)
+            all_commands = file_content.strip().splitlines()
+            for command_line in all_commands:
+                admin_commands = self.parse_admin_commands(command_line + '\n')
+                await self.send_admin_commands(admin_commands)
+        elif self.last_position is None:
+            self.last_position = new_position
 
     async def send_admin_commands(self, admin_commands):
         channel = self.bot.get_channel(self.admin_log)
@@ -82,9 +98,9 @@ class CommandFeed(commands.Cog):
             for message in admin_commands:
                 if len(message) > 2000:
                     message = message[:2000]
-
                 try:
                     await channel.send(embed=message)
+                    await asyncio.sleep(1)
                 except Exception as e:
                     print(f"Error sending message: {e}")
         else:

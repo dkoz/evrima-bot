@@ -22,9 +22,6 @@ FTP_PASS = os.getenv("FTP_PASS", "password")
 FILE_PATH = os.getenv("FILE_PATH", "/TheIsle/Saved/Logs/TheIsle.log")
 ADMIN_FILE_PATH = os.getenv("ADMIN_FILE_PATH", "/TheIsle/Saved/Config/LinuxServer/Game.ini")
 ENABLE_INJECTIONS = os.getenv('ENABLE_INJECTIONS', 'false').lower() in ['true', '1', 'yes']
-SERVERNAME = os.getenv("SERVERNAME", "The Isle")
-MAXPLAYERS = int(os.getenv("MAXPLAYERS", 100))
-CURRENTMAP = os.getenv("CURRENTMAP", "Gateway")
 
 PTERO_ENABLE = os.getenv('PTERO_ENABLE', 'false').lower() in ['true', '1', 'yes']
 PTERO_API = os.getenv("PTERO_API", "default_api_key")

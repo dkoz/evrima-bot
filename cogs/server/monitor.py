@@ -1,9 +1,11 @@
 import nextcord
 from nextcord.ext import commands, tasks
 from config import RCON_HOST, RCON_PORT, RCON_PASS
-from config import SERVERNAME, MAXPLAYERS, CURRENTMAP
 from gamercon_async import EvrimaRCON
 from util.functions import saveserverinfo, loadserverinfo
+import pytz
+import datetime
+import re
 
 class EvrimaMonitorCog(commands.Cog):
     def __init__(self, bot):
@@ -11,36 +13,103 @@ class EvrimaMonitorCog(commands.Cog):
         self.rcon_host = RCON_HOST
         self.rcon_port = RCON_PORT
         self.rcon_password = RCON_PASS
-        self.update_player_count.start()
+        self.update_server_info.start()
         self.update_bot_activity.start()
 
-    def create_embed(self, player_count):
-        servername = SERVERNAME
-        currentmap = CURRENTMAP
-        maxplayers = MAXPLAYERS
-
-        embed = nextcord.Embed(title="Server Status", color=nextcord.Color.blue())
-        embed.add_field(name=f"{servername}", value="", inline=False)
-        embed.add_field(name="Map", value=f"{currentmap}", inline=True)
-        embed.add_field(name="Players", value=f"{player_count}/{maxplayers}", inline=True)
-        embed.add_field(name="Gamemode", value="Survival Mode", inline=True)
-
+    def create_embed(self, server_info):
+        embed_icon="https://cdn.discordapp.com/attachments/855527844670865438/1301430943235706942/communityIcon_nmgut76oq1461.png?ex=67247384&is=67232204&hm=f78ed1501ba5f5148b92451d9198be77f6f8be01c365d1be24079136365138c7&"
+        embed_timestamp = pytz.utc.localize(datetime.datetime.utcnow()).astimezone(pytz.timezone('US/Central')).strftime('%Y-%m-%d %H:%M:%S')
+        embed = nextcord.Embed(title=server_info.get("ServerDetailsServerName", "N/A"), color=nextcord.Color.blurple())
+        embed.set_author(name="Server Info", icon_url=embed_icon)
+        embed.add_field(name="Players", value=f"{server_info.get('ServerCurrentPlayers', 0)}/{server_info.get('ServerMaxPlayers', 0)}", inline=False)
+        embed.add_field(name="Map", value=server_info.get("ServerMap", "N/A"), inline=False)
+        embed.add_field(name="Day Length", value=f"{server_info.get('ServerDayLengthMinutes', 0)} minutes", inline=False)
+        embed.add_field(name="Night Length", value=f"{server_info.get('ServerNightLengthMinutes', 0)} minutes", inline=False)
+        embed.set_thumbnail(url=embed_icon)
+        embed.set_footer(text=f"Last updated: {embed_timestamp}", icon_url=embed_icon)
+        
         return embed
-    
+
+    async def get_server_info(self):
+        try:
+            rcon = EvrimaRCON(self.rcon_host, self.rcon_port, self.rcon_password)
+            await rcon.connect()
+            command = bytes('\x02', 'utf-8') + bytes('\x12', 'utf-8') + bytes('\x00', 'utf-8')
+            response = await rcon.send_command(command)
+
+            print(f"Raw RCON Response: {response}")
+
+            pattern = (
+                r"ServerDetailsServerName:\s*(.*?), "
+                r"ServerPassword:\s*(.*?), "
+                r"ServerMap:\s*(.*?), "
+                r"ServerMaxPlayers:\s*(-?\d+), "
+                r"ServerCurrentPlayers:\s*(-?\d+), "
+                r"bEnableMutations:\s*(true|false), "
+                r"bEnableHumans:\s*(true|false), "
+                r"bServerPassword:\s*(true|false), "
+                r"bQueueEnabled:\s*(true|false), "
+                r"bServerWhitelist:\s*(true|false), "
+                r"bSpawnAI:\s*(true|false), "
+                r"bAllowRecordingReplay:\s*(true|false), "
+                r"bUseRegionSpawning:\s*(true|false), "
+                r"bUseRegionSpawnCooldown:\s*(true|false), "
+                r"RegionSpawnCooldownTimeSeconds:\s*(-?\d+), "
+                r"ServerDayLengthMinutes:\s*(-?\d+), "
+                r"ServerNightLengthMinutes:\s*(-?\d+), "
+                r"bEnableGlobalChat:\s*(true|false)"
+            )
+            match = re.search(pattern, response)
+
+            if match:
+                server_info = {
+                    "ServerDetailsServerName": match.group(1),
+                    "ServerPassword": match.group(2),
+                    "ServerMap": match.group(3),
+                    "ServerMaxPlayers": int(match.group(4)),
+                    "ServerCurrentPlayers": int(match.group(5)),
+                    "bEnableMutations": match.group(6) == "true",
+                    "bEnableHumans": match.group(7) == "true",
+                    "bServerPassword": match.group(8) == "true",
+                    "bQueueEnabled": match.group(9) == "true",
+                    "bServerWhitelist": match.group(10) == "true",
+                    "bSpawnAI": match.group(11) == "true",
+                    "bAllowRecordingReplay": match.group(12) == "true",
+                    "bUseRegionSpawning": match.group(13) == "true",
+                    "bUseRegionSpawnCooldown": match.group(14) == "true",
+                    "RegionSpawnCooldownTimeSeconds": int(match.group(15)),
+                    "ServerDayLengthMinutes": int(match.group(16)),
+                    "ServerNightLengthMinutes": int(match.group(17)),
+                    "bEnableGlobalChat": match.group(18) == "true",
+                }
+                return server_info
+            else:
+                print("Pattern did not match the response format.")
+                return None
+        except Exception as e:
+            print(f"Error retrieving server info: {e}")
+            return None
+
     @tasks.loop(seconds=30)
     async def update_bot_activity(self):
-        player_count = await self.get_player_count()
-        activity_text = f"Players {player_count}/{MAXPLAYERS}"
-        activity = nextcord.Activity(type=nextcord.ActivityType.watching, name=activity_text)
-        await self.bot.change_presence(activity=activity)
+        try:
+            server_info = await self.get_server_info()
+            if server_info:
+                player_count = server_info["ServerCurrentPlayers"]
+                max_players = server_info["ServerMaxPlayers"]
+                activity_text = f"Players {player_count}/{max_players}"
+                activity = nextcord.Activity(type=nextcord.ActivityType.watching, name=activity_text)
+                await self.bot.change_presence(activity=activity)
+        except Exception as e:
+            print(f"Error updating bot activity: {e}")
 
     @update_bot_activity.before_loop
     async def before_update_bot_activity(self):
         await self.bot.wait_until_ready()
 
     @tasks.loop(minutes=5)
-    async def update_player_count(self):
-        print("Updating player count.")
+    async def update_server_info(self):
+        await self.bot.wait_until_ready()
         for guild in self.bot.guilds:
             guild_info_list = loadserverinfo(guild.id)
             if guild_info_list:
@@ -49,42 +118,34 @@ class EvrimaMonitorCog(commands.Cog):
                     if channel:
                         try:
                             message = await channel.fetch_message(int(guild_info['message_id']))
-                            player_count = await self.get_player_count()
-                            embed = self.create_embed(player_count)
-                            await message.edit(embed=embed)
+                            server_info = await self.get_server_info()
+                            if server_info:
+                                embed = self.create_embed(server_info)
+                                await message.edit(embed=embed)
                         except Exception as e:
-                            print(f"Error updating player count for guild {guild.id}: {e}")
+                            print(f"Error updating server info for guild {guild.id}: {e}")
 
-    async def get_player_count(self):
-        command = bytes('\x02', 'utf-8') + bytes('\x40', 'utf-8') + bytes('\x00', 'utf-8')
-        response = await EvrimaRCON(self.rcon_host, self.rcon_port, self.rcon_password).send_command(command)
-        return self.parse_player_list(response)
-
-    def parse_player_list(self, response):
-        if response.startswith("PlayerList"):
-            players = response.split(',')[1:]
-            player_count = len(players) // 2
-            return player_count
-        else:
-            return 0
-
-    @nextcord.slash_command(description='Post a live tracker of your game server.', default_member_permissions=nextcord.Permissions(administrator=True))
-    async def postserver(self, interaction: nextcord.Interaction, channel: nextcord.TextChannel):
-        try:
-            player_count = await self.get_player_count()
-            embed = self.create_embed(player_count)
-            message = await channel.send(embed=embed)
-            saveserverinfo(interaction.guild_id, channel.id, message.id)
-            await interaction.response.send_message(f"Player count message created in {channel.mention}", ephemeral=True)
-        except Exception as e:
-            await interaction.response.send_message(f"Error creating player count message: {e}", ephemeral=True)
-
-    @update_player_count.before_loop
-    async def before_update_player_count(self):
+    @update_server_info.before_loop
+    async def before_update_server_info(self):
         await self.bot.wait_until_ready()
 
+    @nextcord.slash_command(
+        description='Post a live tracker of your game server.',
+        default_member_permissions=nextcord.Permissions(administrator=True)
+    )
+    async def postserver(self, interaction: nextcord.Interaction, channel: nextcord.TextChannel):
+        await interaction.response.defer(ephemeral=True)
+        server_info = await self.get_server_info()
+        if server_info:
+            embed = self.create_embed(server_info)
+            message = await channel.send(embed=embed)
+            saveserverinfo(interaction.guild_id, channel.id, message.id)
+            await interaction.followup.send(f"Server info message created in {channel.mention}", ephemeral=True)
+        else:
+            await interaction.followup.send("Error retrieving server info. Check the RCON connection.", ephemeral=True)
+
     def cog_unload(self):
-        self.update_player_count.cancel()
+        self.update_server_info.cancel()
         self.update_bot_activity.cancel()
 
 def setup(bot):
