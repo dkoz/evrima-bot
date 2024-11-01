@@ -1,5 +1,6 @@
 > [!IMPORTANT]  
-> This bot has been officially archived and will no longer receive updates. All support for this bot has been discontinued. (I lied)
+> The Evrima update has introduced changes to logging, so I’ve updated the Evrima Bot to the latest game build `0.17.56`. Please do not use this bot until the new release.
+
 # The Isle: Evrima Discord RCON Bot
 ![GitHub License](https://img.shields.io/github/license/dkoz/ascension-bot?style=flat-square) ![Discord](https://img.shields.io/discord/802778278200475658?style=flat-square&label=community) ![Discord](https://img.shields.io/discord/1009881575187566632?style=flat-square&label=support)
 
@@ -22,9 +23,6 @@ FTP_PASS | Password for your FTP account.
 FILE_PATH | File path to `TheIsle.log` file.
 ADMIN_FILE_PATH | File path to your `Game.ini` file.
 ENABLE_INJECTIONS | Enable admin injections for your bot.
-SERVERNAME | The name of the server.
-MAXPLAYERS | Maximum number of players allowed on the server.
-CURRENTMAP | The current map for your server
 PTERO_ENABLE | Enable Pterodactyl Panel support
 PTERO_URL | Url to your pterodactyl panel.
 PTERO_API | API key generated under your pterodactyl panel account.
