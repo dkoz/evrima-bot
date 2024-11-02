@@ -97,7 +97,7 @@ def setup(bot):
         cog.rcon,
         cog.saveserver,
         cog.announce,
-        cog.banplayer,
+        # cog.banplayer,
         cog.kickplayer,
         cog.playerlist,
         cog.updateplayables,

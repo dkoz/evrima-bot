@@ -27,6 +27,7 @@ class LogPlayers(commands.Cog):
         file_content = await self.async_sftp_operation(self.read_file, self.filepath)
         if file_content is not None:
             player_data = self.parse_log_file(file_content)
+            # print(f"Parsed player data: {player_data}")
             self.update_json(player_data)
             print("Player data updated automatically.")
         else:
@@ -50,11 +51,12 @@ class LogPlayers(commands.Cog):
     def read_file(self, sftp, filepath):
         with sftp.file(filepath, "r") as file:
             file_content = file.read().decode()
+        # print(f"Read file content: {file_content[:200]}...")
         return file_content
 
     def parse_log_file(self, file_content):
-        pattern_steam_eos = r"Player Connecting .. Steam_Id: (\d+)\s*,\s*EOS_Id: (\w+)"
-        pattern_name = r"LogTheIsleJoinData:.*?(\w+)\s*\[\d+\] Joined The Server"
+        pattern_steam_eos = r"\[LogTheIsleServer\]: \[Player Connecting .. Steam_Id: (\d+)\s*,\s*EOS_Id: (\w+)\]"
+        pattern_name = r"\[LogTheIsleJoinData\]: (\w+) \[\d+\] Joined The Server"
 
         steam_eos_matches = re.findall(pattern_steam_eos, file_content)
         name_matches = re.findall(pattern_name, file_content)
@@ -65,7 +67,12 @@ class LogPlayers(commands.Cog):
         for (steam_id, eos_id), name in zip(steam_eos_matches, name_matches):
             if (eos_id, steam_id) not in seen:
                 seen.add((eos_id, steam_id))
-                player_data.append({"Name": name, "EOS_Id": eos_id, "Steam_Id": steam_id})
+                player_data.append({
+                    "Name": name,
+                    "EOS_Id": eos_id,
+                    "Steam_Id": steam_id
+                })
+                # print(f"Recorded player: Name={name}, EOS_Id={eos_id}, Steam_Id={steam_id}")
                 
         return player_data
 
@@ -83,6 +90,7 @@ class LogPlayers(commands.Cog):
                 for new_entry in player_data:
                     if not any(player['EOS_Id'] == new_entry['EOS_Id'] and player['Steam_Id'] == new_entry['Steam_Id'] for player in existing_data):
                         updated_data.append(new_entry)
+                        # print(f"Added new player entry: {new_entry}")
 
                 file.seek(0)
                 file.truncate()
@@ -91,6 +99,7 @@ class LogPlayers(commands.Cog):
         except FileNotFoundError:
             with open(json_file, "w", encoding="utf-8") as file:
                 json.dump(player_data, file, indent=4)
+                # print(f"Created new players file with initial data: {player_data}")
 
     @commands.command(description="Manually update the player database.")
     @commands.is_owner()
@@ -98,6 +107,7 @@ class LogPlayers(commands.Cog):
         file_content = await self.async_sftp_operation(self.read_file, self.filepath)
         if file_content is not None:
             player_data = self.parse_log_file(file_content)
+            print(f"Manually parsed player data: {player_data}")
             self.update_json(player_data)
             await ctx.send("Player data updated.")
         else:
