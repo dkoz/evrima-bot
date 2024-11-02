@@ -79,7 +79,7 @@ class EvrimaRcon(commands.Cog):
 
     @rcon.subcommand(description="Wipe all corpses from the server.")
     async def wipecorpses(self, interaction: nextcord.Interaction):
-        command = bytes('\x02', 'utf-8') + bytes('\x13', 'utf-8') + bytes('\x00', 'utf-8')
+        command = bytes('\x02', 'utf-8') + bytes('\x13', 'utf-8')
         response = await self.run_rcon(command)
         await interaction.response.send_message(f"RCON response: {response}", ephemeral=True)
 
