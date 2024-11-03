@@ -18,7 +18,7 @@ FTP_HOST = os.getenv("FTP_HOST", "localhost")
 FTP_PORT = int(os.getenv("FTP_PORT", 21))
 FTP_USER = os.getenv("FTP_USER", "user")
 FTP_PASS = os.getenv("FTP_PASS", "password")
-FILE_PATH = os.getenv("FILE_PATH", "/TheIsle/Saved/Logs/TheIsle.log")
+FILE_PATH = os.getenv("FILE_PATH", "/TheIsle/Saved/Logs/TheIsle-Shipping.log")
 ADMIN_FILE_PATH = os.getenv("ADMIN_FILE_PATH", "/TheIsle/Saved/Config/LinuxServer/Game.ini")
 ENABLE_INJECTIONS = os.getenv('ENABLE_INJECTIONS', 'false').lower() in ['true', '1', 'yes']
 

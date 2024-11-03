@@ -7,7 +7,7 @@
  This is a discord RCON bot for The Isle: Evrima. (This is not an injection bot!)
 
 ## Important
- Most of the functionality of this bot is designed for the Pterodactyl game panel. This bot will not work properly without it. The only function that will run without the panel is RCON.
+ Most of the functionality of this bot is designed for the Pterodactyl game panel, or secure FTP connections. This bot will not work properly without it. The only function that will run without the panel is RCON.
 
 ## Optional Environmental Variables
 Variable | Description
@@ -20,7 +20,7 @@ FTP_HOST | Host information for the FTP connection.
 FTP_PORT | Port number for the FTP connection.
 FTP_USER | Username for FTP access.
 FTP_PASS | Password for your FTP account.
-FILE_PATH | File path to `TheIsle.log` file.
+FILE_PATH | File path to `TheIsle-Shipping.log` file.
 ADMIN_FILE_PATH | File path to your `Game.ini` file.
 ENABLE_INJECTIONS | Enable admin injections for your bot.
 PTERO_ENABLE | Enable Pterodactyl Panel support
