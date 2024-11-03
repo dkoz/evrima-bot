@@ -4,8 +4,8 @@ import paramiko
 import asyncio
 import io
 from collections import defaultdict
-from config import FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER
-from config import ENABLE_INJECTIONS, ADMIN_FILE_PATH
+from util.config import FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER
+from util.config import ENABLE_INJECTIONS, ADMIN_FILE_PATH
 
 class MultiKeyConfigParser:
     def __init__(self):

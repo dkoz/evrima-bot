@@ -1,7 +1,7 @@
 import nextcord
 from nextcord.ext import commands
 from pydactyl import PterodactylClient
-from config import PTERO_API, PTERO_URL, PTERO_WHITELIST, PTERO_ENABLE
+from util.config import PTERO_API, PTERO_URL, PTERO_WHITELIST, PTERO_ENABLE
 
 api = PterodactylClient(PTERO_URL, PTERO_API)
 

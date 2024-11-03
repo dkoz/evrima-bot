@@ -1,6 +1,6 @@
 import nextcord
 from nextcord.ext import commands, tasks
-from config import RCON_HOST, RCON_PORT, RCON_PASS
+from util.config import RCON_HOST, RCON_PORT, RCON_PASS
 from gamercon_async import EvrimaRCON
 from util.functions import saveserverinfo, loadserverinfo
 import pytz

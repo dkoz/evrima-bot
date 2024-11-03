@@ -1,7 +1,7 @@
 import nextcord
 from nextcord.ext import commands
 from gamercon_async import EvrimaRCON
-from config import RCON_HOST, RCON_PORT, RCON_PASS
+from util.config import RCON_HOST, RCON_PORT, RCON_PASS
 
 class EvrimaRcon(commands.Cog):
     def __init__(self, bot):

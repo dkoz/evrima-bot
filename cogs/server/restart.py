@@ -5,9 +5,9 @@ from gamercon_async import EvrimaRCON
 from pydactyl import PterodactylClient
 from datetime import datetime
 import pytz
-from config import RCON_HOST, RCON_PORT, RCON_PASS
-from config import PTERO_API, PTERO_URL
-from config import ENABLE_RESTART, RESTART_SERVERID, RESTART_CHANNEL
+from util.config import RCON_HOST, RCON_PORT, RCON_PASS
+from util.config import PTERO_API, PTERO_URL
+from util.config import ENABLE_RESTART, RESTART_SERVERID, RESTART_CHANNEL
 
 class RestartServer(commands.Cog):
     def __init__(self, bot):

@@ -1,7 +1,7 @@
 import nextcord
 from nextcord.ext import commands
 from gamercon_async import EvrimaRCON
-from config import RCON_HOST, RCON_PORT, RCON_PASS
+from util.config import RCON_HOST, RCON_PORT, RCON_PASS
 
 class EvrimaWhitelist(commands.Cog):
     def __init__(self, bot):
@@ -16,23 +16,23 @@ class EvrimaWhitelist(commands.Cog):
 
     @whitelist.subcommand(name="add", description="Add a player to the whitelist.")
     async def addwhitelist(self, interaction: nextcord.Interaction, eos_id: str):
-        command = bytes('\x02', 'utf-8') + bytes('\x82', 'utf-8') + eos_id.encode() + bytes('\x00', 'utf-8')
+        command = b'\x02' + b'\x82' + eos_id.encode() + b'\x00'
         response = await self.run_rcon(command)
         await interaction.response.send_message(f"RCON response: {response}", ephemeral=True)
-        
+
     @whitelist.subcommand(name="remove", description="Remove a player from the whitelist.")
     async def removewhitelist(self, interaction: nextcord.Interaction, eos_id: str):
-        command = bytes('\x02', 'utf-8') + bytes('\x83', 'utf-8') + eos_id.encode() + bytes('\x00', 'utf-8')
+        command = b'\x02' + b'\x83' + eos_id.encode() + b'\x00'
         response = await self.run_rcon(command)
         await interaction.response.send_message(f"RCON response: {response}", ephemeral=True)
-        
+
     @whitelist.subcommand(name="enable", description="Enable the whitelist.")
     async def enablewhitelist(self, interaction: nextcord.Interaction):
         await interaction.response.send_message("Enabling the whitelist for your server.", ephemeral=True)
-        command = bytes('\x02', 'utf-8') + bytes('\x81', 'utf-8') + bytes('\x00', 'utf-8')
+        command = b'\x02' + b'\x81' + b'\x00'
         response = await self.run_rcon(command)
         await interaction.followup.send(f"RCON response: {response}", ephemeral=True)
-        
+            
     async def run_rcon(self, command):
         rcon = EvrimaRCON(self.rcon_host, self.rcon_port, self.rcon_password)
         await rcon.connect()

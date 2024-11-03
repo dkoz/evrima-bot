@@ -5,8 +5,8 @@ import os
 import json
 import re
 import asyncio
-from config import FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER
-from config import ENABLE_LOGGING, FILE_PATH
+from util.config import FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER
+from util.config import ENABLE_LOGGING, FILE_PATH
 
 class LogPlayers(commands.Cog):
     def __init__(self, bot):

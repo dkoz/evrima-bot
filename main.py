@@ -1,7 +1,7 @@
 import nextcord
 from nextcord.ext import commands
 import os
-import config
+import util.config as config
 import sys
 import traceback
 import importlib.util

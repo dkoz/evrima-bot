@@ -4,8 +4,8 @@ import paramiko
 import os
 import re
 import asyncio
-from config import FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER
-from config import ENABLE_LOGGING, KILLFEED_CHANNEL, FILE_PATH
+from util.config import FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER
+from util.config import ENABLE_LOGGING, KILLFEED_CHANNEL, FILE_PATH
 
 class KillFeed(commands.Cog):
     def __init__(self, bot):
