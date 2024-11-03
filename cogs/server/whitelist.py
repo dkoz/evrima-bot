@@ -47,9 +47,6 @@ def setup(bot):
     bot.add_cog(cog)
     if not hasattr(bot, 'all_slash_commands'):
         bot.all_slash_commands = []
-    bot.all_slash_commands.append([
-        cog.whitelist,
-        cog.addwhitelist,
-        cog.removewhitelist,
-        cog.enablewhitelist
+    bot.all_slash_commands.extend([
+        cog.whitelist
     ])

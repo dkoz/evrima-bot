@@ -46,7 +46,7 @@ class GameIniAdminManager(commands.Cog):
         self.ftp_password = FTP_PASS
         self.ini_file_path = ADMIN_FILE_PATH
 
-    @nextcord.slash_command(name="addadmin" ,description="Add admin to the server.", default_member_permissions=nextcord.Permissions(administrator=True), dm_permission=False)
+    @nextcord.slash_command(name="addadmin", description="Add admin to the server.", default_member_permissions=nextcord.Permissions(administrator=True), dm_permission=False)
     async def addadmin(self, interaction: nextcord.Interaction, steam_id: str):
         if await self.modify_admins(steam_id, add=True):
             await interaction.response.send_message(f"Admin {steam_id} added successfully.", ephemeral=True)

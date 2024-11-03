@@ -9,27 +9,55 @@ class HelpView(View):
         self.current_page = 0
 
     async def generate_help_embed(self):
-        embed = nextcord.Embed(title="Help Menu", description="List of all available commands.", color=nextcord.Color.blue())
-        embed.set_footer(text=f"Page {self.current_page + 1}", icon_url=self.bot.user.avatar.url)
+        embed = nextcord.Embed(
+            title="Help Menu",
+            description="List of all available commands.",
+            color=nextcord.Color.blue(),
+        )
+        
+        commands_with_paths = []
+        for cmd in self.bot.all_slash_commands:
+            if hasattr(cmd, 'children') and cmd.children:
+                for subcmd in cmd.children.values():
+                    commands_with_paths.append((f"{cmd.name} {subcmd.name}", subcmd))
+            elif not hasattr(cmd, 'children') or not cmd.children:
+                commands_with_paths.append((cmd.name, cmd))
 
-        commands = self.bot.all_slash_commands if hasattr(self.bot, 'all_slash_commands') else []
-        start = self.current_page * 6
-        end = min(start + 6, len(commands))
+        commands_with_paths.sort(key=lambda x: x[0])
+        total_pages = (len(commands_with_paths) - 1) // 9 + 1
+        
+        embed.set_footer(
+            text=f"Page {self.current_page + 1}/{total_pages}"
+        )
 
-        for command in commands[start:end]:
-            embed.add_field(name=f"`/{command.name}`", value=command.description or "No description", inline=True)
+        start = self.current_page * 9
+        end = min(start + 9, len(commands_with_paths))
 
+        for cmd_path, command in commands_with_paths[start:end]:
+            embed.add_field(
+                name=f"`/{cmd_path}`",
+                value=command.description or "No description",
+                inline=True,
+            )
         return embed
 
-    @nextcord.ui.button(label="Previous", style=nextcord.ButtonStyle.grey)
+    @nextcord.ui.button(label="Previous", style=nextcord.ButtonStyle.blurple)
     async def previous_button_callback(self, button, interaction):
         if self.current_page > 0:
             self.current_page -= 1
             await self.update_help_message(interaction)
 
-    @nextcord.ui.button(label="Next", style=nextcord.ButtonStyle.grey)
+    @nextcord.ui.button(label="Next", style=nextcord.ButtonStyle.blurple)
     async def next_button_callback(self, button, interaction):
-        if (self.current_page + 1) * 6 < len(self.bot.all_slash_commands if hasattr(self.bot, 'all_slash_commands') else []):
+        commands_with_paths = []
+        for cmd in self.bot.all_slash_commands:
+            if hasattr(cmd, 'children') and cmd.children:
+                for subcmd in cmd.children.values():
+                    commands_with_paths.append((f"{cmd.name} {subcmd.name}", subcmd))
+            elif not hasattr(cmd, 'children') or not cmd.children:
+                commands_with_paths.append((cmd.name, cmd))
+
+        if (self.current_page + 1) * 9 < len(commands_with_paths):
             self.current_page += 1
             await self.update_help_message(interaction)
 
@@ -37,16 +65,19 @@ class HelpView(View):
         embed = await self.generate_help_embed()
         await interaction.response.edit_message(embed=embed, view=self)
 
-
 class EvrimaHelp(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @nextcord.slash_command(description="Shows a list of available commands.")
     async def help(self, interaction: nextcord.Interaction):
-        view = HelpView(self.bot)
-        embed = await view.generate_help_embed()
-        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+        try:
+            await interaction.response.defer(ephemeral=True)
+            view = HelpView(self.bot)
+            embed = await view.generate_help_embed()
+            await interaction.followup.send(embed=embed, view=view)
+        except Exception as e:
+            await interaction.followup.send(f"Error in help command: {e}")
 
     # Please do not remove the about me section. I've spent a lot of time on this bot and I would appreciate it if you left it in.
     @nextcord.slash_command(description="Information about the Evrima Rcon bot.")
@@ -70,4 +101,13 @@ class EvrimaHelp(commands.Cog):
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
 def setup(bot):
-    bot.add_cog(EvrimaHelp(bot))
+    cog = EvrimaHelp(bot)
+    bot.add_cog(cog)
+    if not hasattr(bot, "all_slash_commands"):
+        bot.all_slash_commands = []
+    bot.all_slash_commands.extend(
+        [
+            cog.help,
+            cog.about,
+        ]
+    )

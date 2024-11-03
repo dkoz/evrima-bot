@@ -98,13 +98,5 @@ def setup(bot):
     if not hasattr(bot, 'all_slash_commands'):
         bot.all_slash_commands = []
     bot.all_slash_commands.extend([
-        cog.rcon,
-        cog.saveserver,
-        cog.announce,
-        # cog.banplayer,
-        cog.kickplayer,
-        cog.playerlist,
-        cog.updateplayables,
-        cog.serverinfo,
-        cog.playerinfo
+        cog.rcon
     ])

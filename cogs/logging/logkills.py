@@ -46,38 +46,27 @@ class KillFeed(commands.Cog):
         return file_content, new_position
 
     def parse_kill_feed(self, file_content):
-        pattern = r"LogTheIsleKillData: Verbose: \[(.*?)\] (.*?)\s*(?:\[(\d+)\])?\s*Dino: (.*?), .*? - (Killed the following player: (.*?), \[(\d+)\], Dino: (.*?),|Died from Natural cause)"
+        pattern = r"\[LogTheIsleKillData\]: (.*?) \[(\d+)\] Dino: (.*?), (Male|Female), \d+\.\d+ - (Died from Natural cause|Killed the following player: (.*?), \[(\d+)\], Dino: (.*?),)"
         matches = re.findall(pattern, file_content)
 
         kill_feed = []
         for match in matches:
-            time, killer, killer_id, killer_dino, death_type, victim, victim_id, victim_dino = match
-            #if 'Died from Natural cause' in death_type:
-            #    message = f"[{time}] {killer} [{killer_id}] {killer_dino} died from natural causes."
-            #elif 'Killed the following player' in death_type:
-            #    message = f"[{time}] {killer} [{killer_id}] {killer_dino} killed {victim} [{victim_id}] {victim_dino}."
-            #else:
-            #    message = f"[{time}] Unknown death event."
-
-            #kill_feed.append(message)
-
-            # format in embed
-            if 'Died from Natural cause' in death_type:
-                message = nextcord.Embed(
-                    title="Kill Feed",
-                    description=f"[{time}] {killer} [{killer_id}] {killer_dino} died from natural causes."
-                )
-            elif 'Killed the following player' in death_type:
-                message = nextcord.Embed(
-                    title="Kill Feed",
-                    description=f"[{time}] {killer} [{killer_id}] {killer_dino} killed {victim} [{victim_id}] {victim_dino}."
-                )
-            else:
-                message = nextcord.Embed(
-                    title="Kill Feed",
-                    description=f"[{time}] Unknown death event."
-                )
-            kill_feed.append(message)
+            try:
+                print(f"Parsing match: {match}")
+                time, killer, killer_id, killer_dino, event_type, victim, victim_id, victim_dino = match
+                if "Died from Natural cause" in event_type:
+                    message = nextcord.Embed(
+                        title="Kill Feed",
+                        description=f"[{time}] {killer} [{killer_id}] {killer_dino} died from natural causes."
+                    )
+                elif "Killed the following player" in event_type:
+                    message = nextcord.Embed(
+                        title="Kill Feed",
+                        description=f"[{time}] {killer} [{killer_id}] {killer_dino} killed {victim} [{victim_id}] {victim_dino}."
+                    )
+                kill_feed.append(message)
+            except Exception as e:
+                print(f"Error parsing match: {match} - {e}")
         return kill_feed
 
     @tasks.loop(seconds=30)
@@ -85,10 +74,14 @@ class KillFeed(commands.Cog):
         file_content, new_position = await self.async_sftp_operation(
             self.read_file, self.filepath, self.last_position
         )
-        if self.last_position is None or new_position != self.last_position:
+        if self.last_position is not None and new_position > self.last_position:
             self.last_position = new_position
-            kill_feed = self.parse_kill_feed(file_content)
-            await self.send_kill_feed(kill_feed)
+            all_kills = file_content.strip().splitlines()
+            for kill_line in all_kills:
+                kill_feed = self.parse_kill_feed(kill_line + '\n')
+                await self.send_kill_feed(kill_feed)
+        elif self.last_position is None:
+            self.last_position = new_position
 
     async def send_kill_feed(self, kill_feed):
         channel = self.bot.get_channel(self.kill_feed_channel_id)
@@ -96,9 +89,9 @@ class KillFeed(commands.Cog):
             for message in kill_feed:
                 if len(message) > 2000:
                     message = message[:2000]
-
                 try:
                     await channel.send(embed=message)
+                    await asyncio.sleep(1)
                 except Exception as e:
                     print(f"Error sending message: {e}")
         else:
