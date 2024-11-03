@@ -2,7 +2,10 @@
 *.pyc
 *.env
 *.json
+*.log
+*.db
+*.sqlite3
 util/eos.py
 util/tracker.py
 /venv/*
-cogs_disabled/*
+cogs-dev/*
