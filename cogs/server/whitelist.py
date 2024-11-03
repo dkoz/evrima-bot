@@ -10,7 +10,11 @@ class EvrimaWhitelist(commands.Cog):
         self.rcon_password = RCON_PASS
         self.rcon_port = RCON_PORT
 
-    @nextcord.slash_command(description="Evrima whitelist commands.", default_member_permissions=nextcord.Permissions(administrator=True))
+    @nextcord.slash_command(
+        description="Evrima whitelist commands.",
+        default_member_permissions=nextcord.Permissions(administrator=True),
+        dm_permission=False
+    )
     async def whitelist(self, _interaction: nextcord.Interaction):
         pass
 

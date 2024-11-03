@@ -44,7 +44,11 @@ class RestartServer(commands.Cog):
             print(f'Error during restart: {e}')
 
 
-    @nextcord.slash_command(description="Restart the game server.", default_member_permissions=nextcord.Permissions(administrator=True))
+    @nextcord.slash_command(
+        description="Restart the game server.",
+        default_member_permissions=nextcord.Permissions(administrator=True),
+        dm_permission=False
+    )
     async def restart(self, interaction: nextcord.Interaction, server_id: str, wait_time: int = 300):
         await interaction.response.send_message("Server restart initiated. Restarting in 5 minutes.", ephemeral=True)
         await self.perform_restart(server_id, wait_time)

@@ -29,7 +29,11 @@ class PterodactylControls(commands.Cog):
             print(f'You have an error: {e}')
             await interaction.response.send_message(f'You have an error: {e}', ephemeral=True)
 
-    @nextcord.slash_command(description="Pterodactyl Controls", default_member_permissions=nextcord.Permissions(administrator=True))
+    @nextcord.slash_command(
+        description="Pterodactyl Controls",
+        default_member_permissions=nextcord.Permissions(administrator=True),
+        dm_permission=False
+    )
     async def ptero(self, interaction: nextcord.Interaction):
         pass
 
