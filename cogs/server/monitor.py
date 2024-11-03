@@ -34,7 +34,7 @@ class EvrimaMonitorCog(commands.Cog):
         try:
             rcon = EvrimaRCON(self.rcon_host, self.rcon_port, self.rcon_password)
             await rcon.connect()
-            command = bytes('\x02', 'utf-8') + bytes('\x12', 'utf-8') + bytes('\x00', 'utf-8')
+            command = b'\x02' + b'\x12' + b'\x00'
             response = await rcon.send_command(command)
 
             # This regex pattern is used to extract the rcon response into a dictionary.
