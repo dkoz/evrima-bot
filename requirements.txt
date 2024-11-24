@@ -3,5 +3,5 @@ python-dotenv==1.0.1
 paramiko==3.5.0
 gamercon-async==1.0.7
 py-dactyl==2.0.4
-aiohttp==3.10.10
+aiohttp==3.10.11
 pytz==2024.2

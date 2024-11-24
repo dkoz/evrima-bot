@@ -1,6 +1,7 @@
 import nextcord
 from nextcord.ext import commands, tasks
 from util.config import RCON_HOST, RCON_PORT, RCON_PASS
+import util.constants as c
 from gamercon_async import EvrimaRCON
 from util.functions import saveserverinfo, loadserverinfo
 import pytz
@@ -17,16 +18,15 @@ class EvrimaMonitorCog(commands.Cog):
         self.update_bot_activity.start()
 
     def create_embed(self, server_info):
-        embed_icon="https://cdn.discordapp.com/attachments/855527844670865438/1301430943235706942/communityIcon_nmgut76oq1461.png?ex=67247384&is=67232204&hm=f78ed1501ba5f5148b92451d9198be77f6f8be01c365d1be24079136365138c7&"
         embed_timestamp = pytz.utc.localize(datetime.datetime.utcnow()).astimezone(pytz.timezone('US/Central')).strftime('%Y-%m-%d %H:%M:%S')
         embed = nextcord.Embed(title=server_info.get("ServerDetailsServerName", "N/A"), color=nextcord.Color.blurple())
-        embed.set_author(name="Server Info", icon_url=embed_icon)
+        embed.set_author(name="Server Info", icon_url=c.BOT_ICON)
         embed.add_field(name="Players", value=f"{server_info.get('ServerCurrentPlayers', 0)}/{server_info.get('ServerMaxPlayers', 0)}", inline=False)
         embed.add_field(name="Map", value=server_info.get("ServerMap", "N/A"), inline=False)
         embed.add_field(name="Day Length", value=f"{server_info.get('ServerDayLengthMinutes', 0)} minutes", inline=False)
         embed.add_field(name="Night Length", value=f"{server_info.get('ServerNightLengthMinutes', 0)} minutes", inline=False)
-        embed.set_thumbnail(url=embed_icon)
-        embed.set_footer(text=f"Last updated: {embed_timestamp}", icon_url=embed_icon)
+        embed.set_thumbnail(url=c.BOT_ICON)
+        embed.set_footer(text=f"{c.BOT_TEXT}: Last updated: {embed_timestamp}")
         
         return embed
 
