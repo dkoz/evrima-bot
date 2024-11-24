@@ -5,9 +5,12 @@ import util.config as config
 import sys
 import traceback
 import importlib.util
+import util.errorhandling as e
 
 intents = nextcord.Intents.all()
 bot = commands.Bot(command_prefix=config.BOT_PREFIX, intents=intents, help_command=None)
+
+e.setup_logging()
 
 @bot.event
 async def on_ready():
