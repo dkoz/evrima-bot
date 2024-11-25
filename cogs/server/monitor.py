@@ -7,6 +7,7 @@ from util.functions import saveserverinfo, loadserverinfo
 import pytz
 import datetime
 import re
+import logging
 
 class EvrimaMonitorCog(commands.Cog):
     def __init__(self, bot):
@@ -84,10 +85,10 @@ class EvrimaMonitorCog(commands.Cog):
                 }
                 return server_info
             else:
-                print("Pattern did not match the response format.")
+                logging.error("Pattern did not match the response format.")
                 return None
         except Exception as e:
-            print(f"Error retrieving server info: {e}")
+            logging.error(f"Error retrieving server info: {e}")
             return None
 
     @tasks.loop(seconds=30)
@@ -101,7 +102,7 @@ class EvrimaMonitorCog(commands.Cog):
                 activity = nextcord.Activity(type=nextcord.ActivityType.watching, name=activity_text)
                 await self.bot.change_presence(activity=activity)
         except Exception as e:
-            print(f"Error updating bot activity: {e}")
+            logging.error(f"Error updating bot activity: {e}")
 
     @update_bot_activity.before_loop
     async def before_update_bot_activity(self):
@@ -123,7 +124,7 @@ class EvrimaMonitorCog(commands.Cog):
                                 embed = self.create_embed(server_info)
                                 await message.edit(embed=embed)
                         except Exception as e:
-                            print(f"Error updating server info for guild {guild.id}: {e}")
+                            logging.error(f"Error updating server info for guild {guild.id}: {e}")
 
     @update_server_info.before_loop
     async def before_update_server_info(self):

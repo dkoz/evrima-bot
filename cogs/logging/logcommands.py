@@ -4,6 +4,7 @@ import paramiko
 import os
 import re
 import asyncio
+import logging
 from util.config import FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER
 from util.config import ENABLE_LOGGING, ADMINLOG_CHANNEL, FILE_PATH
 
@@ -20,7 +21,7 @@ class CommandFeed(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("Log Commands cog is ready.")
+        logging.info("Log Commands cog is ready.")
         self.check_admin_commands.start()
 
     async def async_sftp_operation(self, operation, *args, **kwargs):
@@ -102,12 +103,12 @@ class CommandFeed(commands.Cog):
                     await channel.send(embed=message)
                     await asyncio.sleep(1)
                 except Exception as e:
-                    print(f"Error sending message: {e}")
+                    logging.error(f"Error sending message: {e}")
         else:
-            print("Channel not found or bot does not have permission to access it.")
+            logging.error("Channel not found or bot does not have permission to access it.")
 
 def setup(bot):
     if ENABLE_LOGGING:
         bot.add_cog(CommandFeed(bot))
     else:
-        print("LogCommands cog is disabled.")
+        logging.info("LogCommands cog is disabled.")

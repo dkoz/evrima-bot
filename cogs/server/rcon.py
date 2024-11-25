@@ -2,6 +2,7 @@ import nextcord
 from nextcord.ext import commands
 from gamercon_async import EvrimaRCON
 from util.config import RCON_HOST, RCON_PORT, RCON_PASS
+import logging
 
 class EvrimaRcon(commands.Cog):
     def __init__(self, bot):
@@ -73,7 +74,7 @@ class EvrimaRcon(commands.Cog):
         command = b'\x02' + b'\x12' + b'\x00'
         response = await self.run_rcon(command)
         await interaction.response.send_message(f"RCON response: {response}", ephemeral=True)
-        
+
     @rcon.subcommand(description="Get details about a player.")
     async def playerinfo(self, interaction: nextcord.Interaction, user_id: str):
         await interaction.response.defer(ephemeral=True)
@@ -88,9 +89,13 @@ class EvrimaRcon(commands.Cog):
         await interaction.response.send_message(f"RCON response: {response}", ephemeral=True)
 
     async def run_rcon(self, command):
-        rcon = EvrimaRCON(self.rcon_host, self.rcon_port, self.rcon_password)
-        await rcon.connect()
-        return await rcon.send_command(command)
+        try:
+            rcon = EvrimaRCON(self.rcon_host, self.rcon_port, self.rcon_password)
+            await rcon.connect()
+            return await rcon.send_command(command)
+        except Exception as e:
+            logging.error(f"Error running RCON command: {e}")
+            return None
 
 def setup(bot):
     cog = EvrimaRcon(bot)

@@ -4,6 +4,7 @@ import paramiko
 import os
 import re
 import asyncio
+import logging
 from util.config import FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER
 from util.config import ENABLE_LOGGING, CHATLOG_CHANNEL, FILE_PATH
 
@@ -20,7 +21,7 @@ class LogChat(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("LogChat cog is ready.")
+        logging.info("LogChat cog is ready.")
         self.check_chat_log.start()
 
     async def async_sftp_operation(self, operation, *args, **kwargs):
@@ -89,4 +90,4 @@ def setup(bot):
     if ENABLE_LOGGING:
         bot.add_cog(LogChat(bot))
     else:
-        print("LogChat cog is disabled.")
+        logging.info("LogChat cog is disabled.")

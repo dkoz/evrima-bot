@@ -3,6 +3,7 @@ from nextcord.ext import commands
 import paramiko
 import asyncio
 import io
+import logging
 from collections import defaultdict
 from util.config import FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER
 from util.config import ENABLE_INJECTIONS, ADMIN_FILE_PATH
@@ -65,7 +66,7 @@ class GameIniAdminManager(commands.Cog):
         try:
             return await loop.run_in_executor(None, self._modify_admins_sync, steam_id, add)
         except Exception as e:
-            print(f"Error: {e}")
+            logging.error(f"Error: {e}")
             return False
 
     def _modify_admins_sync(self, steam_id, add):
@@ -113,4 +114,4 @@ def setup(bot):
             cog.removeadmin
         ])
     else:
-        print("Admin injection cog disabled.")
+        logging.info("Admin injection cog disabled.")
