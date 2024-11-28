@@ -1,5 +1,5 @@
 > [!IMPORTANT]  
-> The Evrima update has introduced changes to logging, so I’ve updated the Evrima Bot to the latest game build `0.17.56`. Please do not use this bot until the new release.
+> This bot has been updated to the latest game version, `v0.17.65`. However, there are known issues with RCON that result in the `Game.ini` being deleted. Please note that these issues are due to the latest game update and not related to evrima-bot.
 
 # The Isle: Evrima Discord RCON Bot
 ![GitHub License](https://img.shields.io/github/license/dkoz/ascension-bot?style=flat-square) ![Discord](https://img.shields.io/discord/802778278200475658?style=flat-square&label=community) ![Discord](https://img.shields.io/discord/1009881575187566632?style=flat-square&label=support)
