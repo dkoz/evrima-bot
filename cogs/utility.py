@@ -1,5 +1,6 @@
 import nextcord
 from nextcord.ext import commands
+import util.constants as c
 
 class Utility(commands.Cog):
     def __init__(self, bot):
@@ -61,6 +62,22 @@ class Utility(commands.Cog):
         embed.set_thumbnail(url=member.avatar.url if member.avatar else None)
 
         await interaction.response.send_message(embed=embed)
+        
+    @nextcord.slash_command(description="Show map of the server.")
+    async def map(self, interaction: nextcord.Interaction):
+        await interaction.response.defer()
+        map_embed = nextcord.Embed(
+            title="Server Map",
+            description="This is the map of the server.",
+            url="https://vulnona.com/game/the_isle/",
+            color=nextcord.Color.blurple()
+        )
+        map_embed.set_image(url="https://raw.githubusercontent.com/dkoz/evrima-bot/refs/heads/main/assets/worldmap.png")
+        map_embed.set_footer(
+            text=f"{c.BOT_TEXT} {c.BOT_VERSION}",
+            icon_url=c.BOT_ICON
+        )
+        await interaction.followup.send(embed=map_embed)
 
 def setup(bot):
     cog = Utility(bot)

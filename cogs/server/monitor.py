@@ -19,15 +19,14 @@ class EvrimaMonitorCog(commands.Cog):
         self.update_bot_activity.start()
 
     def create_embed(self, server_info):
-        embed_timestamp = pytz.utc.localize(datetime.datetime.utcnow()).astimezone(pytz.timezone('US/Central')).strftime('%Y-%m-%d %H:%M:%S')
+        embed_timestamp = pytz.utc.localize(datetime.datetime.utcnow()).astimezone(pytz.timezone('US/Central')).strftime('%m/%d/%Y %H:%M %Z')
         embed = nextcord.Embed(title=server_info.get("ServerDetailsServerName", "N/A"), color=nextcord.Color.blurple())
-        embed.set_author(name="Server Info", icon_url=c.BOT_ICON)
         embed.add_field(name="Players", value=f"{server_info.get('ServerCurrentPlayers', 0)}/{server_info.get('ServerMaxPlayers', 0)}", inline=False)
         embed.add_field(name="Map", value=server_info.get("ServerMap", "N/A"), inline=False)
         embed.add_field(name="Day Length", value=f"{server_info.get('ServerDayLengthMinutes', 0)} minutes", inline=False)
         embed.add_field(name="Night Length", value=f"{server_info.get('ServerNightLengthMinutes', 0)} minutes", inline=False)
         embed.set_thumbnail(url=c.BOT_ICON)
-        embed.set_footer(text=f"{c.BOT_TEXT}: Last updated: {embed_timestamp}")
+        embed.set_footer(text=f"{c.BOT_TEXT} {c.BOT_VERSION} • Updated: {embed_timestamp}", icon_url=c.BOT_ICON)
         
         return embed
 
