@@ -64,8 +64,14 @@ class EvrimaRcon(commands.Cog):
             await interaction.followup.send(f"An error occurred: {e}", ephemeral=True)
 
     @rcon.subcommand(description="Update list of allowed playables.")
-    async def updateplayables(self, interaction: nextcord.Interaction, message: str):
+    async def allowdinos(self, interaction: nextcord.Interaction, message: str):
         command = b'\x02' + b'\x15' + message.encode() + b'\x00'
+        response = await self.run_rcon(command)
+        await interaction.response.send_message(f"RCON response: {response}", ephemeral=True)
+        
+    @rcon.subcommand(description="Disable certain AI on the server.")
+    async def disableai(self, interaction: nextcord.Interaction, message: str):
+        command = b'\x02' + b'\x91' + message.encode() + b'\x00'
         response = await self.run_rcon(command)
         await interaction.response.send_message(f"RCON response: {response}", ephemeral=True)
         
@@ -75,10 +81,18 @@ class EvrimaRcon(commands.Cog):
         response = await self.run_rcon(command)
         await interaction.response.send_message(f"RCON response: {response}", ephemeral=True)
 
-    @rcon.subcommand(description="Get details about a player.")
-    async def playerinfo(self, interaction: nextcord.Interaction, user_id: str):
+    @rcon.subcommand(description="Get details about all players.")
+    async def playerinfo(self, interaction: nextcord.Interaction):
         await interaction.response.defer(ephemeral=True)
-        command = b'\x02' + b'\x77' + user_id.encode() + b'\x00'
+        command = b'\x02' + b'\x77' + b'\x00'
+        response = await self.run_rcon(command)
+        await interaction.followup.send(f"RCON response: {response}", ephemeral=True)
+
+    @rcon.subcommand(description="Direct message a player.")
+    async def pm(self, interaction: nextcord.Interaction, user_id: str, message: str):
+        await interaction.response.send_message(f"Sending direct messsage to {user_id}\nMessage: {message}", ephemeral=True)
+        formatted_command = f"{user_id},{message}"
+        command = b'\x02' + b'\x11' + formatted_command.encode() + b'\x00'
         response = await self.run_rcon(command)
         await interaction.followup.send(f"RCON response: {response}", ephemeral=True)
 

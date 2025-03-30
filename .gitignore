@@ -8,4 +8,4 @@
 util/eos.py
 util/tracker.py
 /venv/*
-cogs-dev/*
+/dev/*

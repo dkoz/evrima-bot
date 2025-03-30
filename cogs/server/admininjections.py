@@ -2,7 +2,6 @@ import nextcord
 from nextcord.ext import commands
 import paramiko
 import asyncio
-import io
 import logging
 from collections import defaultdict
 from util.config import FTP_HOST, FTP_PASS, FTP_PORT, FTP_USER
@@ -17,16 +16,18 @@ class MultiKeyConfigParser:
         for line in string.splitlines():
             line = line.strip()
             if line.startswith("[") and line.endswith("]"):
-                current_section = line[1:-1]
+                current_section = line.lower()
             elif "=" in line and current_section is not None:
                 key, value = line.split("=", 1)
                 self._sections[current_section].append((key.strip(), value.strip()))
 
     def get(self, section, key):
-        return [item[1] for item in self._sections[section] if item[0] == key]
+        return [item[1] for item in self._sections[section] if item[0].lower() == key.lower()]
 
     def set(self, section, key, values):
-        self._sections[section] = [(k, v) for k, v in self._sections[section] if k != key]
+        section = section.lower()
+        key = key.lower()
+        self._sections[section] = [(k, v) for k, v in self._sections[section] if k.lower() != key]
         for value in values:
             self._sections[section].append((key, value))
 
@@ -81,8 +82,8 @@ class GameIniAdminManager(commands.Cog):
             config = MultiKeyConfigParser()
             config.read_string(file_content)
 
-            admin_section = '/Script/TheIsle.TIGameStateBase'
-            admin_key = 'AdminsSteamIDs'
+            admin_section = "/script/theisle.tigamestatebase"
+            admin_key = "AdminsSteamIDs"
             admins = config.get(admin_section, admin_key)
 
             if add:
