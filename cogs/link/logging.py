@@ -107,4 +107,6 @@ class LinkListener(commands.Cog):
             logging.error(f"Error in check_link_commands loop: {e}")
 
 def setup(bot):
+    if not ENABLE_LOGGING:
+        return
     bot.add_cog(LinkListener(bot))

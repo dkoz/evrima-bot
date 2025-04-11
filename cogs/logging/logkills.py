@@ -84,7 +84,7 @@ class KillFeed(commands.Cog):
             else:
                 message = nextcord.Embed(
                     title="Kill Feed",
-                    description=f"[{timestamp}] {killer} [{killer_id}] {killer_dino} killed {victim} [{victim_id}] {victim_dino} ({victim_gender}), Growth: {victim_growth}."
+                    description=f"[{timestamp}] {killer} [{killer_id}] {killer_dino} killed {victim} [{victim_id}] {victim_dino}"
                 )
             kill_feed.append(message)
         return kill_feed
