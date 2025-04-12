@@ -1,12 +1,11 @@
 > [!IMPORTANT]  
-> This bot has been updated to the latest game version, `v0.18.138`.
+> This bot has been updated to the latest game version, `v0.18.140`.
 
 # The Isle: Evrima Discord RCON Bot
 ![GitHub License](https://img.shields.io/github/license/dkoz/ascension-bot?style=flat-square) ![Discord](https://img.shields.io/discord/802778278200475658?style=flat-square&label=community) ![Discord](https://img.shields.io/discord/1009881575187566632?style=flat-square&label=support)
 
- This is a discord RCON bot for The Isle: Evrima. (This is not an injection bot!)
+ This is a discord bot for The Isle: Evrima featuring both RCON and SFTP support. (This is not an injection bot!)
 
-## Important
  Most of the functionality of this bot is designed for the Pterodactyl game panel, or secure FTP connections. This bot will not work properly without it. The only function that will run without the panel is RCON.
 
 ## Environmental Variables
