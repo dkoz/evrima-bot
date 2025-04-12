@@ -12,8 +12,7 @@ class EvrimaWhitelist(commands.Cog):
 
     @nextcord.slash_command(
         description="Evrima whitelist commands.",
-        default_member_permissions=nextcord.Permissions(administrator=True),
-        dm_permission=False
+        default_member_permissions=nextcord.Permissions(administrator=True)
     )
     async def whitelist(self, _interaction: nextcord.Interaction):
         pass

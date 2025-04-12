@@ -33,8 +33,7 @@ class PterodactylControls(commands.Cog):
 
     @nextcord.slash_command(
         description="Pterodactyl Controls",
-        default_member_permissions=nextcord.Permissions(administrator=True),
-        dm_permission=False
+        default_member_permissions=nextcord.Permissions(administrator=True)
     )
     async def ptero(self, interaction: nextcord.Interaction):
         pass
@@ -85,19 +84,14 @@ class PterodactylControls(commands.Cog):
             uptime_ms = resources.get('uptime', 0)
             uptime_minutes = int(uptime_ms / 1000 / 60) if uptime_ms else 0
 
-            server_details = {
-                "Name": details.get("name", "N/A"),
-                "Status": details.get("status", "Unknown"),
-                "Node": details.get("node", "N/A"),
-                "Memory Usage": f"{resources.get('memory_bytes', 0) / 1024 / 1024:.2f} MB",
-                "CPU Usage": f"{resources.get('cpu_absolute', 0):.2f}%",
-                "Disk Usage": f"{resources.get('disk_bytes', 0) / 1024 / 1024 / 1024:.2f} GB",
-                "Uptime": f"{uptime_minutes} minutes"
-            }
-
             embed = nextcord.Embed(title="Server Details", color=0x00ff00)
-            for key, value in server_details.items():
-                embed.add_field(name=key, value=value, inline=True)
+            embed.add_field(name="Name", value=details.get("name", "N/A") or "N/A", inline=True)
+            embed.add_field(name="Status", value=details.get("status", "Unknown") or "Unknown", inline=True)
+            embed.add_field(name="Node", value=details.get("node", "N/A") or "N/A", inline=True)
+            embed.add_field(name="Memory Usage", value=f"{resources.get('memory_bytes', 0) / 1048576:.2f} MB", inline=True)
+            embed.add_field(name="CPU Usage", value=f"{resources.get('cpu_absolute', 0):.2f}%" if resources.get("cpu_absolute") is not None else "0.00%", inline=True)
+            embed.add_field(name="Disk Usage", value=f"{resources.get('disk_bytes', 0) / 1073741824:.2f} GB", inline=True)
+            embed.add_field(name="Uptime", value=f"{uptime_minutes} minutes", inline=True)
             embed.set_footer(text=f"Server ID: {SERVER_ID}")
 
             await interaction.response.send_message(embed=embed, ephemeral=True)

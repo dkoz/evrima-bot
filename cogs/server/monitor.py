@@ -131,8 +131,7 @@ class EvrimaMonitorCog(commands.Cog):
 
     @nextcord.slash_command(
         description='Post a live tracker of your game server.',
-        default_member_permissions=nextcord.Permissions(administrator=True),
-        dm_permission=False
+        default_member_permissions=nextcord.Permissions(administrator=True)
     )
     async def postserver(self, interaction: nextcord.Interaction, channel: nextcord.TextChannel):
         await interaction.response.defer(ephemeral=True)

@@ -17,6 +17,7 @@ BOT_PEFIX | Prefix used for chat commands. Default `!`
 RCON_HOST | The host address to your game server.
 RCON_PORT | The RCON port set in your `Game.ini`.
 RCON_PASS | The password you set for the RCON access.
+DEFAULT_GUILDS | The Guild IDs that slash commands will be available in.
 CHATLOG_CHANNEL | Channel where you want chat logs to be posted.
 KILLFEED_CHANNEL | Channel where you want kill feed to be posted.
 ADMINLOG_CHANNEL | Channel where in-game admin commands are logged.

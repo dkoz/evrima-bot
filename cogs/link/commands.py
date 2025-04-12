@@ -7,13 +7,13 @@ class LinkSystem(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @nextcord.slash_command(description="Generate a link code.", dm_permission=False)
+    @nextcord.slash_command(description="Generate a link code.")
     async def link(self, interaction: nextcord.Interaction):
         code = "{:06d}".format(random.randint(0, 999999))
         await db.add_link(code, str(interaction.user.id))
         await interaction.response.send_message(f"Your link code is: `{code}`", ephemeral=True)
 
-    @nextcord.slash_command(description="Get your linked profile.", dm_permission=False)
+    @nextcord.slash_command(description="Get your linked profile.")
     async def profile(self, interaction: nextcord.Interaction):
         profile_data = await db.user_profile(str(interaction.user.id))
         if not profile_data:

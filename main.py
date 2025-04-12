@@ -7,7 +7,7 @@ import asyncio
 
 e.setup_logging()
 intents = nextcord.Intents.all()
-bot = commands.Bot(command_prefix=config.BOT_PREFIX, intents=intents, help_command=None)
+bot = commands.Bot(command_prefix=config.BOT_PREFIX, intents=intents, help_command=None, default_guild_ids=config.DEFAULT_GUILDS)
 
 @bot.event
 async def on_ready():

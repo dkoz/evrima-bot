@@ -82,11 +82,11 @@ class PterodactylControlView(nextcord.ui.View):
             up = r.get("uptime", 0)
             upm = int(up / 1000 / 60) if up else 0
             e = nextcord.Embed(title="Server Info")
-            e.add_field(name="Name", value=d.get("name", "N/A"), inline=True)
-            e.add_field(name="Status", value=d.get("status", "Unknown"), inline=True)
-            e.add_field(name="Node", value=d.get("node", "N/A"), inline=True)
+            e.add_field(name="Name", value=d.get("name", "N/A") or "N/A", inline=True)
+            e.add_field(name="Status", value=d.get("status", "Unknown") or "Unknown", inline=True)
+            e.add_field(name="Node", value=d.get("node", "N/A") or "N/A", inline=True)
             e.add_field(name="Memory", value=f"{r.get('memory_bytes', 0)/1048576:.2f} MB", inline=True)
-            e.add_field(name="CPU", value=f"{r.get('cpu_absolute', 0):.2f}%", inline=True)
+            e.add_field(name="CPU", value=f"{r.get('cpu_absolute', 0):.2f}%" if r.get("cpu_absolute") is not None else "0.00%", inline=True)
             e.add_field(name="Disk", value=f"{r.get('disk_bytes', 0)/1073741824:.2f} GB", inline=True)
             e.add_field(name="Uptime", value=f"{upm}m", inline=True)
             e.set_footer(text=f"ID: {SERVER_ID}")
@@ -100,6 +100,7 @@ class PterodactylPanel(commands.Cog):
         self.bot = bot
 
     @commands.command(name="sendpanel")
+    @commands.is_owner()
     async def send_panel_cmd(self, ctx, channel_id: int):
         if not PTERO_ENABLE:
             await ctx.send("Pterodactyl controls are disabled.")

@@ -67,7 +67,7 @@ class DinoStorage(commands.Cog):
                     return row[0]
                 return None
 
-    @nextcord.slash_command(description="Store your dino.", dm_permission=False)
+    @nextcord.slash_command(description="Store your dino.")
     async def store(self, interaction: nextcord.Interaction):
         discord_id = str(interaction.user.id)
         steam_id = await self.get_linked_steam_id(discord_id)
@@ -99,7 +99,7 @@ class DinoStorage(commands.Cog):
             failure_embed = nextcord.Embed(title="Dino Storage", description="Failed to store dino.", color=0xFF0000)
             await interaction.response.send_message(embed=failure_embed, ephemeral=True)
 
-    @nextcord.slash_command(description="Load your stored dino.", dm_permission=False)
+    @nextcord.slash_command(description="Load your stored dino.")
     async def load(self, interaction: nextcord.Interaction):
         discord_id = str(interaction.user.id)
         steam_id = await self.get_linked_steam_id(discord_id)

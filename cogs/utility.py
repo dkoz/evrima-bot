@@ -6,11 +6,11 @@ class Utility(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @nextcord.slash_command(description="Get the bot's latency.", default_member_permissions=nextcord.Permissions(administrator=True), dm_permission=False)
+    @nextcord.slash_command(description="Get the bot's latency.", default_member_permissions=nextcord.Permissions(administrator=True))
     async def ping(self, interaction: nextcord.Interaction):
         await interaction.response.send_message(f"Pong! {round(self.bot.latency * 1000)}ms")
 
-    @nextcord.slash_command(description="Shows list of guilds the bot is in.", default_member_permissions=nextcord.Permissions(administrator=True), dm_permission=False)
+    @nextcord.slash_command(description="Shows list of guilds the bot is in.", default_member_permissions=nextcord.Permissions(administrator=True))
     async def guilds(self, interaction: nextcord.Interaction):
         guilds = self.bot.guilds
 
@@ -22,7 +22,7 @@ class Utility(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
-    @nextcord.slash_command(description="Get detailed statistics of the server.", default_member_permissions=nextcord.Permissions(administrator=True), dm_permission=False)
+    @nextcord.slash_command(description="Get detailed statistics of the server.", default_member_permissions=nextcord.Permissions(administrator=True))
     async def serverstats(self, interaction: nextcord.Interaction):
         guild = interaction.guild
         if guild is None:
@@ -46,7 +46,7 @@ class Utility(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
-    @nextcord.slash_command(description="Get information about a user.", default_member_permissions=nextcord.Permissions(administrator=True), dm_permission=False)
+    @nextcord.slash_command(description="Get information about a user.", default_member_permissions=nextcord.Permissions(administrator=True))
     async def userinfo(self, interaction: nextcord.Interaction, member: nextcord.Member = None):
         member = member or interaction.user
         roles = [role.name for role in member.roles[1:]]
