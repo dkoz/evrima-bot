@@ -1,8 +1,8 @@
 nextcord==3.0.1
-python-dotenv==1.0.1
-paramiko==3.5.0
+python-dotenv==1.1.0
+paramiko==3.5.1
 gamercon-async==1.0.7
-aiohttp==3.10.11
+aiohttp==3.11.16
 aiosqlite==0.21.0
-pytz==2024.2
-pillow==11.1.0
+pytz==2025.2
+pillow==11.2.1

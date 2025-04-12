@@ -3,7 +3,6 @@ from nextcord.ext import commands
 import util.config as config
 import util.errorhandling as e
 import util.coghandler as c
-import asyncio
 
 e.setup_logging()
 intents = nextcord.Intents.all()
@@ -27,9 +26,7 @@ async def on_guild_remove(guild):
 async def on_application_command_error(interaction, error):
     await e.handle_errors(interaction, error)
 
-async def main():
-    await c.load_cogs(bot)
-    await bot.start(config.BOT_TOKEN)
+c.load_cogs(bot)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    bot.run(config.BOT_TOKEN)

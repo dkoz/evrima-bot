@@ -1,10 +1,15 @@
 import nextcord
 from nextcord.ext import commands
 import util.constants as c
+import util.database as db
 
 class Utility(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.bot.loop.create_task(self.initialize())
+
+    async def initialize(self):
+        await db.init_db()
 
     @nextcord.slash_command(description="Get the bot's latency.", default_member_permissions=nextcord.Permissions(administrator=True))
     async def ping(self, interaction: nextcord.Interaction):

@@ -98,6 +98,7 @@ class PterodactylControlView(nextcord.ui.View):
 class PterodactylPanel(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.view_added = False
 
     @commands.command(name="sendpanel")
     @commands.is_owner()
@@ -116,9 +117,14 @@ class PterodactylPanel(commands.Cog):
         await c.send(embed=e, view=v)
         await ctx.send(f"Panel sent to {c.mention}.")
 
+    @commands.Cog.listener()
+    async def on_ready(self):
+        if not self.view_added:
+            self.bot.add_view(PterodactylControlView())
+            self.view_added = True
+
 def setup(bot):
     if PTERO_ENABLE:
         bot.add_cog(PterodactylPanel(bot))
-        bot.add_view(PterodactylControlView())
     else:
         logging.info("Pterodactyl Panel Cog is disabled.")
